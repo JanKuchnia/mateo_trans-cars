@@ -1,27 +1,52 @@
 {
-  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/unpack.py": {
-    "mtime": 1783172901.5374866,
-    "ast_hash": "44f4df7f4372a20a5896a8da8cf4415c",
-    "semantic_hash": "44f4df7f4372a20a5896a8da8cf4415c"
+  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/package.json": {
+    "mtime": 1783369793.4266536,
+    "ast_hash": "811835f1fbe6c41305fe232a14383b2e",
+    "semantic_hash": "811835f1fbe6c41305fe232a14383b2e"
   },
-  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/pack.py": {
-    "mtime": 1783173112.0080523,
-    "ast_hash": "94e86a499466d124abea1b8bf27b5deb",
-    "semantic_hash": "94e86a499466d124abea1b8bf27b5deb"
+  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/astro.config.mjs": {
+    "mtime": 1783373093.2866197,
+    "ast_hash": "eac6ed0ed52f565d654399402e521d8e",
+    "semantic_hash": "eac6ed0ed52f565d654399402e521d8e"
   },
-  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/src/asset_669a5451-cdbb-4d83-9d6c-5115bc08d11c.js": {
-    "mtime": 1783343353.3721604,
-    "ast_hash": "843c817ed1abf0fa4deacf7162814833",
-    "semantic_hash": "843c817ed1abf0fa4deacf7162814833"
+  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/.astro/content-assets.mjs": {
+    "mtime": 1783370126.223606,
+    "ast_hash": "8aeea624d36ca2b4c7d0e0748b76ba28",
+    "semantic_hash": "8aeea624d36ca2b4c7d0e0748b76ba28"
   },
-  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/index.html": {
-    "mtime": 1783347059.320781,
-    "ast_hash": "976423a5f02b192d1415513cef7e1150",
-    "semantic_hash": "976423a5f02b192d1415513cef7e1150"
+  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/.astro/content-modules.mjs": {
+    "mtime": 1783370126.225553,
+    "ast_hash": "8aeea624d36ca2b4c7d0e0748b76ba28",
+    "semantic_hash": "8aeea624d36ca2b4c7d0e0748b76ba28"
   },
-  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/src/index.html": {
-    "mtime": 1783346215.6497242,
-    "ast_hash": "bda3cc4e93fccc00b57a8215ef818103",
-    "semantic_hash": "bda3cc4e93fccc00b57a8215ef818103"
+  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/.astro/content.d.ts": {
+    "mtime": 1783373187.5609696,
+    "ast_hash": "694fbff66ae0bf0e069742b823f8645e",
+    "semantic_hash": "694fbff66ae0bf0e069742b823f8645e"
+  },
+  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/.astro/types.d.ts": {
+    "mtime": 1783373187.5609696,
+    "ast_hash": "f3d48b2aa569815a445d3509aa161559",
+    "semantic_hash": "f3d48b2aa569815a445d3509aa161559"
+  },
+  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/.astro/data-store.json": {
+    "mtime": 1783370724.1713107,
+    "ast_hash": "400b8f7cb0f824bd6449876556912e55",
+    "semantic_hash": "400b8f7cb0f824bd6449876556912e55"
+  },
+  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/.astro/settings.json": {
+    "mtime": 1783370724.8443155,
+    "ast_hash": "06e6249b0a205a3f72db1282577b4774",
+    "semantic_hash": "06e6249b0a205a3f72db1282577b4774"
+  },
+  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/src/pages/index.astro": {
+    "mtime": 1783373166.4998915,
+    "ast_hash": "0327610fa35d4ddd1ba5c157b9145548",
+    "semantic_hash": "0327610fa35d4ddd1ba5c157b9145548"
+  },
+  "/home/jankuchnia/Desktop/Mateo_Tran&Cars/.github/workflows/deploy.yml": {
+    "mtime": 1783373207.6560442,
+    "ast_hash": "3fdd01515107abc8b65630d7c936aa93",
+    "semantic_hash": "3fdd01515107abc8b65630d7c936aa93"
   }
 }

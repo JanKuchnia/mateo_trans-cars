@@ -1,76 +1,64 @@
 # Graph Report - .  (2026-07-06)
 
 ## Corpus Check
-- Corpus is ~19,658 words - fits in a single context window. You may not need a graph.
+- Corpus is ~5,740 words - fits in a single context window. You may not need a graph.
 
 ## Summary
-- 67 nodes · 113 edges · 10 communities (6 shown, 4 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.95)
+- 58 nodes · 50 edges · 10 communities (9 shown, 1 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.95)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_React Component Management|React Component Management]]
-- [[_COMMUNITY_DOM Template Parsing|DOM Template Parsing]]
-- [[_COMMUNITY_Runtime Engine Initialization|Runtime Engine Initialization]]
-- [[_COMMUNITY_Document Bootstrapping and Decoding|Document Bootstrapping and Decoding]]
-- [[_COMMUNITY_Asset Bundler Toolchain|Asset Bundler Toolchain]]
-- [[_COMMUNITY_Path Resolution and Script Loading|Path Resolution and Script Loading]]
-- [[_COMMUNITY_CSS Style Transformation|CSS Style Transformation]]
-- [[_COMMUNITY_Template Compilation|Template Compilation]]
-- [[_COMMUNITY_Type Verification Utilities|Type Verification Utilities]]
-- [[_COMMUNITY_Web Presentation Layer|Web Presentation Layer]]
+- [[_COMMUNITY_Astro Content Schema Types|Astro Content Schema Types]]
+- [[_COMMUNITY_Project Dependency & Deployment|Project Dependency & Deployment]]
+- [[_COMMUNITY_User Interface Pages|User Interface Pages]]
+- [[_COMMUNITY_Package Build Scripts|Package Build Scripts]]
+- [[_COMMUNITY_Astro Local Settings|Astro Local Settings]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `walkChildren()` - 7 edges
-2. `walk()` - 7 edges
-3. `createRuntime()` - 7 edges
-4. `compileAttr()` - 6 edges
-5. `collectProps()` - 6 edges
-6. `boot()` - 5 edges
-7. `resolve()` - 5 edges
-8. `walkComponent()` - 5 edges
-9. `walkXImport()` - 5 edges
-10. `walkElement()` - 5 edges
+1. `scripts` - 4 edges
+2. `Deploy to GitHub Pages Workflow` - 4 edges
+3. `_variables` - 2 edges
+4. `Build Job` - 2 edges
+5. `Deploy Job` - 2 edges
+6. `dev` - 1 edges
+7. `build` - 1 edges
+8. `preview` - 1 edges
+9. `astro` - 1 edges
+10. `RenderResult` - 1 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Unpack Script (unpack.py)` --conceptually_related_to--> `Asset Bundler System`  [INFERRED]
-  unpack.py → pack.py
+- None detected - all connections are within the same source files.
 
-## Communities (10 total, 4 thin omitted)
+## Communities (10 total, 1 thin omitted)
 
-### Community 1 - "DOM Template Parsing"
-Cohesion: 0.36
-Nodes (11): collectProps(), compileAttr(), contentKey(), walk(), walkChildren(), walkComponent(), walkElement(), walkFor() (+3 more)
+### Community 0 - "Astro Content Schema Types"
+Cohesion: 0.07
+Nodes (29): AllValuesOf, AnyEntryMap, CollectionEntry, CollectionKey, ContentCollectionKey, ContentConfig, ContentEntryMap, DataCollectionKey (+21 more)
 
-### Community 2 - "Runtime Engine Initialization"
-Cohesion: 0.20
-Nodes (10): createComponentFactory(), createExternalModules(), createHelmetManager(), createPseudoSheet(), createRegistry(), createRuntime(), createStreamTracker(), evalDcLogic() (+2 more)
-
-### Community 3 - "Document Bootstrapping and Decoding"
+### Community 1 - "Project Dependency & Deployment"
 Cohesion: 0.25
-Nodes (8): boot(), dcNameFromPath(), getReactDOM(), parseDataProps(), parseDcDocument(), parseDcText(), rootNameForDocument(), safeDecode()
+Nodes (7): dependencies, astro, name, type, Build Job, Deploy Job, Deploy to GitHub Pages Workflow
 
-### Community 4 - "Asset Bundler Toolchain"
+### Community 2 - "User Interface Pages"
 Cohesion: 0.29
-Nodes (3): Asset Bundler System, Pack Script (pack.py), Unpack Script (unpack.py)
+Nodes (6): button, faqs, icon, isOpen, reviews, wrapper
 
-### Community 5 - "Path Resolution and Script Loading"
-Cohesion: 0.33
-Nodes (6): findTopLevelEquality(), loadReactUmd(), loadScript(), parensWrapWhole(), resolve(), resolvePath()
-
-### Community 6 - "CSS Style Transformation"
-Cohesion: 0.67
-Nodes (3): cssToObj(), hostPositionStyle(), kebabToCamel()
+### Community 3 - "Package Build Scripts"
+Cohesion: 0.50
+Nodes (4): scripts, build, dev, preview
 
 ## Knowledge Gaps
-- **3 isolated node(s):** `src/index.html`, `React Component Architecture`, `Mateo Trans & Cars Web Application`
+- **42 isolated node(s):** `name`, `type`, `dev`, `build`, `preview` (+37 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **1 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **What connects `src/index.html`, `React Component Architecture`, `Mateo Trans & Cars Web Application` to the rest of the system?**
-  _3 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `React Component Management` be split into smaller, more focused modules?**
-  _Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected._
+- **Why does `scripts` connect `Package Build Scripts` to `Project Dependency & Deployment`?**
+  _High betweenness centrality (0.019) - this node is a cross-community bridge._
+- **What connects `name`, `type`, `dev` to the rest of the system?**
+  _42 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `Astro Content Schema Types` be split into smaller, more focused modules?**
+  _Cohesion score 0.06666666666666667 - nodes in this community are weakly interconnected._
