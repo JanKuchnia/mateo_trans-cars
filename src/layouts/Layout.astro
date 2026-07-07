@@ -42,7 +42,7 @@ const fontFaceCss = `
 
   <style set:html={fontFaceCss}></style>
 
-  <style>
+  <style is:global>
     html {
       scroll-behavior: smooth;
     }
@@ -59,7 +59,7 @@ const fontFaceCss = `
       -webkit-font-smoothing: antialiased;
     }
 
-    :global(a) {
+    a {
       text-decoration: none;
       color: inherit
     }
@@ -595,15 +595,17 @@ const fontFaceCss = `
     const mainNav = document.getElementById('main-nav');
     const hamburgerIcon = document.getElementById('hamburger-icon');
 
-    function setMenu(open) {
-      mainNav.classList.toggle('active', open);
-      hamburgerIcon.classList.toggle('active', open);
-    }
+    if (menuToggle && mainNav && hamburgerIcon) {
+      const setMenu = (open: boolean) => {
+        mainNav.classList.toggle('active', open);
+        hamburgerIcon.classList.toggle('active', open);
+      };
 
-    menuToggle.addEventListener('click', () => setMenu(!mainNav.classList.contains('active')));
-    document.querySelectorAll('.nav-link').forEach((link) => {
-      link.addEventListener('click', () => setMenu(false));
-    });
+      menuToggle.addEventListener('click', () => setMenu(!mainNav.classList.contains('active')));
+      document.querySelectorAll('.nav-link').forEach((link) => {
+        link.addEventListener('click', () => setMenu(false));
+      });
+    }
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {

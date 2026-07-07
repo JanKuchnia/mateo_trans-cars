@@ -56,13 +56,17 @@ const faqs = [
       box-shadow: 0 12px 32px rgba(20,20,22,0.08);
     }
 
-    /* Calculator Styles */
     .calc-container {
       background: #fff;
       border: 1px solid #e6e4e0;
       border-radius: 6px;
       padding: 36px;
       box-shadow: 0 4px 20px rgba(20,20,22,0.02);
+    }
+    @media (max-width: 600px) {
+      .calc-container {
+        padding: 20px;
+      }
     }
     .calc-grid {
       display: grid;
@@ -97,6 +101,9 @@ const faqs = [
       outline: none;
       background: #f6f5f3;
       transition: border-color 0.2s ease;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
     .select-styled:focus {
       border-color: #C8102E;
