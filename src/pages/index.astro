@@ -1,4 +1,8 @@
 ---
+import Layout from "../layouts/Layout.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+
 const cars = [
   { name: "Ford Kuga", type: "SUV · osobowy", image: "https://images.pexels.com/photos/27138933/pexels-photo-27138933.jpeg?auto=compress&cs=tinysrgb&w=600" },
   { name: "Mitsubishi Outlander", type: "SUV · osobowy", image: "https://images.pexels.com/photos/2676096/pexels-photo-2676096.jpeg?auto=compress&cs=tinysrgb&w=600" },
@@ -21,428 +25,10 @@ const faqs = [
 ];
 ---
 
-<!DOCTYPE html>
-<html lang="pl">
-
-<head>
-  <meta charset="utf-8" />
-  <title>MATEO TRANS & CARS - Komis, Transport, Pomoc Drogowa</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description"
-    content="MATEO TRANS & CARS - Komis samochodowy Myślenice. Skup i sprzedaż aut osobowych oraz dostawczych, wypożyczalnia busów i lawet, pomoc drogowa." />
-  <meta property="og:title" content="MATEO TRANS & CARS - Komis, Transport, Pomoc Drogowa" />
-  <meta property="og:description" content="Skup i sprzedaż aut, wypożyczalnia busów, pomoc drogowa Myślenice." />
-  <meta property="og:type" content="website" />
-
-  <style>
-    @font-face {
-      font-family: 'Archivo';
-      font-style: normal;
-      font-weight: 400 800;
-      font-display: swap;
-      src: url("fonts/archivo-vietnamese.woff2") format('woff2');
-      unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
-    }
-
-    @font-face {
-      font-family: 'Archivo';
-      font-style: normal;
-      font-weight: 400 800;
-      font-display: swap;
-      src: url("fonts/archivo-latin-ext.woff2") format('woff2');
-      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-    }
-
-    @font-face {
-      font-family: 'Archivo';
-      font-style: normal;
-      font-weight: 400 800;
-      font-display: swap;
-      src: url("fonts/archivo-latin.woff2") format('woff2');
-      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    [id] {
-      scroll-margin-top: 88px;
-    }
-
-    body {
-      margin: 0;
-      background: #f6f5f3;
-      font-family: 'Archivo', system-ui, sans-serif;
-      color: #1a1a1c;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit
-    }
-
-    :root {
-      --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
-      --spring-smooth: cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    button:active,
-    .phone-btn:active,
-    .hero-grid a:active,
-    .skup-actions a:active,
-    .services-grid>a:active,
-    .cars-grid>a:active,
-    .contact-boxes-grid>a:active {
-      transform: scale(0.97) !important;
-      transition: transform 0.1s ease !important;
-    }
-
-    .main-nav a {
-      transition: color 0.25s var(--spring-smooth) !important;
-    }
-
-    .services-grid>a,
-    .cars-grid>a,
-    .contact-boxes-grid>a,
-    .contact-boxes-grid>div {
-      transition: border-color 0.3s var(--spring-smooth),
-        box-shadow 0.3s var(--spring-smooth),
-        transform 0.3s var(--spring-smooth) !important;
-      will-change: transform, box-shadow, border-color;
-    }
-
-    .services-grid>a:hover,
-    .cars-grid>a:hover,
-    .contact-boxes-grid>a:hover,
-    .contact-boxes-grid>div:hover {
-      transform: translateY(-4px) !important;
-      border-color: #C8102E !important;
-      box-shadow: 0 12px 32px rgba(20, 20, 22, 0.08) !important;
-    }
-
-    .reveal-on-scroll {
-      opacity: 0;
-      transform: translateY(16px);
-      filter: blur(4px);
-      transition: opacity 0.5s var(--spring-smooth),
-        transform 0.5s var(--spring-smooth),
-        filter 0.5s var(--spring-smooth) !important;
-      will-change: transform, opacity, filter;
-    }
-
-    .reveal-on-scroll.reveal-in {
-      opacity: 1;
-      transform: translateY(0);
-      filter: blur(0px);
-    }
-
-    .services-grid>a:nth-child(1) { transition-delay: 0.04s; }
-    .services-grid>a:nth-child(2) { transition-delay: 0.08s; }
-    .services-grid>a:nth-child(3) { transition-delay: 0.12s; }
-    .services-grid>a:nth-child(4) { transition-delay: 0.16s; }
-
-    .cars-grid>a:nth-child(1) { transition-delay: 0.04s; }
-    .cars-grid>a:nth-child(2) { transition-delay: 0.08s; }
-    .cars-grid>a:nth-child(3) { transition-delay: 0.12s; }
-    .cars-grid>a:nth-child(4) { transition-delay: 0.16s; }
-
-    .process-grid>div:nth-child(1) { transition-delay: 0.04s; }
-    .process-grid>div:nth-child(2) { transition-delay: 0.08s; }
-    .process-grid>div:nth-child(3) { transition-delay: 0.12s; }
-    .process-grid>div:nth-child(4) { transition-delay: 0.16s; }
-
-    .why-grid>div:nth-child(2)>div:nth-child(1) { transition-delay: 0.04s; }
-    .why-grid>div:nth-child(2)>div:nth-child(2) { transition-delay: 0.08s; }
-    .why-grid>div:nth-child(2)>div:nth-child(3) { transition-delay: 0.12s; }
-
-    .reviews-grid>div:nth-child(1) { transition-delay: 0.04s; }
-    .reviews-grid>div:nth-child(2) { transition-delay: 0.08s; }
-    .reviews-grid>div:nth-child(3) { transition-delay: 0.12s; }
-
-    .contact-boxes-grid>a:nth-child(1) { transition-delay: 0.04s; }
-    .contact-boxes-grid>a:nth-child(2) { transition-delay: 0.08s; }
-    .contact-boxes-grid>a:nth-child(3) { transition-delay: 0.12s; }
-    .contact-boxes-grid>a:nth-child(4) { transition-delay: 0.16s; }
-
-    .faq-answer-wrapper {
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.3s var(--spring-smooth);
-      overflow: hidden;
-    }
-
-    .faq-answer-wrapper.open {
-      grid-template-rows: 1fr;
-    }
-
-    .faq-answer-content {
-      min-height: 0;
-    }
-
-    .faq-icon {
-      transition: transform 0.3s var(--spring-smooth), stroke 0.3s ease !important;
-    }
-
-    .faq-icon.faq-icon-active {
-      transform: rotate(90deg);
-      stroke: #C8102E !important;
-    }
-
-    .plus-vertical-line {
-      transition: transform 0.3s var(--spring-smooth), opacity 0.2s ease !important;
-      transform-origin: center;
-    }
-
-    .faq-icon.faq-icon-active .plus-vertical-line {
-      transform: scaleY(0);
-      opacity: 0;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-        transform: none !important;
-        filter: none !important;
-        transition-delay: 0s !important;
-      }
-    }
-
-    @media (max-width: 900px) {
-      .menu-toggle { display: block !important; }
-
-      .main-nav {
-        display: flex !important;
-        flex-direction: column !important;
-        position: absolute !important;
-        top: 88px !important;
-        left: 0 !important;
-        right: 0 !important;
-        height: calc(100vh - 88px) !important;
-        background: rgba(20, 20, 22, 0.97) !important;
-        backdrop-filter: blur(20px) !important;
-        -webkit-backdrop-filter: blur(20px) !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-        padding: 32px 24px !important;
-        gap: 0 !important;
-        align-items: flex-start !important;
-        box-sizing: border-box !important;
-        overflow-y: auto !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
-        transform: translateY(-12px) !important;
-        transition: opacity 0.3s var(--spring-smooth),
-          transform 0.3s var(--spring-smooth),
-          visibility 0.3s !important;
-        pointer-events: none !important;
-      }
-
-      .main-nav.active {
-        opacity: 1 !important;
-        visibility: visible !important;
-        transform: translateY(0) !important;
-        pointer-events: auto !important;
-      }
-
-      .main-nav.active a {
-        display: flex !important;
-        align-items: center !important;
-        width: 100% !important;
-        padding: 18px 0 !important;
-        font-size: 16px !important;
-        font-weight: 700 !important;
-        color: #e9e9ef !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-        letter-spacing: 0.05em !important;
-        text-transform: uppercase !important;
-        opacity: 0;
-        animation: slideInLink 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      }
-
-      .main-nav.active a svg {
-        margin-right: 12px !important;
-        width: 18px !important;
-        height: 18px !important;
-        color: #C8102E !important;
-      }
-
-      .main-nav.active a:hover { color: #fff !important; }
-
-      .main-nav.active a:nth-child(1) { animation-delay: 0.04s; }
-      .main-nav.active a:nth-child(2) { animation-delay: 0.08s; }
-      .main-nav.active a:nth-child(3) { animation-delay: 0.12s; }
-      .main-nav.active a:nth-child(4) { animation-delay: 0.16s; }
-      .main-nav.active a:nth-child(5) { animation-delay: 0.20s; }
-
-      @keyframes slideInLink {
-        from { opacity: 0; transform: translateX(-20px); }
-        to { opacity: 1; transform: translateX(0); }
-      }
-
-      .menu-toggle { transition: transform 0.2s ease !important; }
-      .menu-toggle:hover { color: #C8102E !important; transform: scale(1.08); }
-      .menu-toggle:active { transform: scale(0.92); }
-
-      .hamburger-icon line {
-        transition: transform 0.25s var(--spring-smooth), opacity 0.2s ease !important;
-        transform-origin: center;
-      }
-
-      .hamburger-icon.active .line-top { transform: translateY(6px) rotate(45deg) !important; }
-      .hamburger-icon.active .line-mid { opacity: 0 !important; }
-      .hamburger-icon.active .line-bot { transform: translateY(-6px) rotate(-45deg) !important; }
-
-      .main-header-content { padding: 0 20px !important; gap: 16px !important; }
-
-      .hero-grid { grid-template-columns: 1fr !important; gap: 32px !important; padding: 48px 16px 0 !important; }
-      .hero-grid>div:first-child { padding-bottom: 32px !important; text-align: center !important; align-items: center !important; }
-      .hero-grid h1 { font-size: 34px !important; line-height: 1.15 !important; }
-      .hero-grid p { font-size: 15.5px !important; line-height: 1.6 !important; margin: 0 auto !important; }
-      .hero-grid div[style*="flex-wrap:wrap"] { justify-content: center !important; }
-      .hero-grid div[style*="align-items:center;gap:12px"] { justify-content: center !important; }
-      .hero-grid div[style*="min-height:440px"] { min-height: 280px !important; }
-
-      .assist-bar-content { padding: 16px 16px !important; font-size: 13.5px !important; gap: 8px !important; justify-content: center !important; text-align: center !important; }
-      .assist-bar-content a { font-size: 15px !important; }
-
-      .partners-content { padding: 24px 16px !important; gap: 16px !important; flex-direction: column !important; align-items: center !important; }
-      .partners-logos { justify-content: center !important; }
-
-      #uslugi { padding: 48px 16px 24px !important; }
-      #uslugi h2 { font-size: 28px !important; }
-      .services-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
-      .services-grid>a { padding: 24px !important; }
-
-      section[data-screen-label="Oferta aut"] { padding: 40px 16px 48px !important; }
-      section[data-screen-label="Oferta aut"] h2 { font-size: 28px !important; }
-      .cars-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
-
-      #proces { padding: 48px 16px !important; }
-      #proces h2 { font-size: 28px !important; }
-      .process-grid { grid-template-columns: 1fr !important; border-top: none !important; }
-      .process-step { padding: 24px 0 !important; border-right: none !important; border-bottom: 1px solid #e6e4e0 !important; }
-      .process-step.last-step { border-bottom: none !important; padding-bottom: 0 !important; }
-
-      .skup-content { padding: 48px 16px !important; gap: 28px !important; text-align: center !important; justify-content: center !important; }
-      .skup-content h2 { font-size: 26px !important; }
-      .skup-content p { font-size: 14.5px !important; margin: 0 auto !important; }
-      .skup-actions { width: 100% !important; align-items: stretch !important; }
-
-      .why-grid { grid-template-columns: 1fr !important; gap: 32px !important; padding: 48px 16px !important; }
-      .why-grid h2 { font-size: 28px !important; }
-
-      #onas { padding: 48px 16px !important; }
-      .about-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
-      .about-grid h2 { font-size: 28px !important; }
-
-      #opinie>div { padding: 48px 16px !important; }
-      #opinie h2 { font-size: 28px !important; }
-      .reviews-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
-      .reviews-grid>div { padding: 20px !important; }
-
-      .faq-section { padding: 48px 16px !important; }
-      .faq-section h2 { font-size: 28px !important; margin-bottom: 24px !important; }
-      .faq-section button { padding: 16px 4px !important; }
-      .faq-section button span { font-size: 16px !important; }
-
-      .contact-section { padding: 48px 16px 40px !important; }
-      .contact-section h2 { font-size: 28px !important; }
-      .contact-boxes-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
-      .contact-details-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
-      .contact-details-grid>div { padding: 24px !important; }
-      .map-wrapper { min-height: 250px !important; }
-    }
-
-    @media (max-width: 600px) {
-      .contact-boxes-grid { grid-template-columns: 1fr !important; }
-      .cars-grid { grid-template-columns: 1fr !important; }
-      .phone-btn { padding: 8px 12px !important; font-size: 13px !important; }
-    }
-
-    @media (max-width: 480px) {
-      .main-header-content a span:first-child { font-size: 16px !important; }
-      .main-header-content a span:nth-child(2) { font-size: 8px !important; letter-spacing: 0.18em !important; }
-    }
-  </style>
-</head>
-
-<body>
-  <!-- ============ TOP BAR ============ -->
-  <header data-screen-label="Nagłówek"
-    style="position:fixed;top:0;left:0;right:0;z-index:100;background:#141416;border-bottom:1px solid #2a2a2e">
-    <div class="main-header-content"
-      style="max-width:1200px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:88px;gap:24px">
-      <a href="#top" style="display:flex;flex-direction:column;line-height:1">
-        <span
-          style="font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:800;font-size:19px;letter-spacing:0.04em;color:#fff">MATEO
-          <span style="color:#C8102E">TRANS&amp;CARS</span></span>
-        <span
-          style="font-size:10.5px;letter-spacing:0.28em;color:#8a8a92;margin-top:5px;text-transform:uppercase">Myślenice
-          · Komis · Transport</span>
-      </a>
-      <nav id="main-nav" class="main-nav"
-        style="display:flex;align-items:center;gap:26px;font-size:14px;font-weight:600;color:#c9c9cf">
-        <a href="#komis" class="nav-link" style="display:flex;align-items:center;gap:7px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
-            <path
-              d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2">
-            </path>
-            <circle cx="7" cy="17" r="2"></circle>
-            <path d="M9 17h6"></path>
-            <circle cx="17" cy="17" r="2"></circle>
-          </svg>Komis</a>
-        <a href="#skutery" class="nav-link" style="display:flex;align-items:center;gap:7px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
-            <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
-            <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
-            <path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
-          </svg>Skutery wodne</a>
-        <a href="#wypozyczalnia" class="nav-link" style="display:flex;align-items:center;gap:7px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
-            <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
-            <path d="M15 18H9"></path>
-            <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62L18.3 8.38a1 1 0 0 0-.78-.38H14"></path>
-            <circle cx="17" cy="18" r="2"></circle>
-            <circle cx="7" cy="18" r="2"></circle>
-          </svg>Wypożyczalnia</a>
-        <a href="#pomoc" class="nav-link" style="display:flex;align-items:center;gap:7px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
-            <path
-              d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
-            </path>
-          </svg>Pomoc drogowa</a>
-        <a href="#kontakt" class="nav-link" style="display:flex;align-items:center;gap:7px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
-            <path
-              d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0">
-            </path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>Kontakt</a>
-      </nav>
-      <a href="tel:+48791072708" class="phone-btn"
-        style="display:flex;align-items:center;gap:10px;background:#C8102E;color:#fff;padding:11px 20px;border-radius:4px;font-weight:700;font-size:14px;letter-spacing:0.02em;white-space:nowrap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
-          <path
-            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-          </path>
-        </svg>791 072 708</a>
-      <button id="menu-toggle" class="menu-toggle" aria-label="Menu"
-        style="display:none;background:none;border:none;color:#fff;cursor:pointer;padding:8px">
-        <svg id="hamburger-icon" class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
-          <line x1="4" y1="6" x2="20" y2="6" class="line-top"></line>
-          <line x1="4" y1="12" x2="20" y2="12" class="line-mid"></line>
-          <line x1="4" y1="18" x2="20" y2="18" class="line-bot"></line>
-        </svg>
-      </button>
-    </div>
-  </header>
-
+<Layout
+  title="MATEO TRANS & CARS - Komis, Transport, Pomoc Drogowa"
+  description="MATEO TRANS & CARS - Komis samochodowy Myślenice. Skup i sprzedaż aut osobowych oraz dostawczych, wypożyczalnia busów i lawet, pomoc drogowa."
+>
   <!-- ============ HERO ============ -->
   <section id="top" data-screen-label="Hero" style="background:#141416;color:#fff;padding-top:88px">
     <div class="hero-grid"
@@ -551,8 +137,7 @@ const faqs = [
       </div>
       <div class="services-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:22px">
 
-        <a id="komis" class="reveal-on-scroll" href="https://mateocars.otomoto.pl/inventory" target="_blank"
-          rel="noopener"
+        <a class="reveal-on-scroll" href={`${base}komis/`}
           style="background:#fff;border:1px solid #e6e4e0;border-radius:6px;padding:34px;display:flex;flex-direction:column;gap:14px">
           <span style="font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#C8102E;font-weight:700">01
             — Sprzedaż</span>
@@ -560,16 +145,15 @@ const faqs = [
           <p style="font-size:15px;line-height:1.6;color:#5a5a60;margin:0;text-wrap:pretty">Sprawdzone auta osobowe i
             dostawcze. Skup, sprzedaż, pomoc w leasingu i rejestracji. Pełna, aktualna oferta zawsze na Otomoto.</p>
           <span
-            style="margin-top:auto;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;color:#C8102E">Oferta
-            na Otomoto<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            style="margin-top:auto;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;color:#C8102E">Zobacz
+            więcej<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
-              <path d="M15 3h6v6"></path>
-              <path d="M10 14 21 3"></path>
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
             </svg></span>
         </a>
 
-        <a id="wypozyczalnia" class="reveal-on-scroll" href="#kontakt"
+        <a class="reveal-on-scroll" href={`${base}wypozyczalnia/`}
           style="background:#fff;border:1px solid #e6e4e0;border-radius:6px;padding:34px;display:flex;flex-direction:column;gap:14px">
           <span style="font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#C8102E;font-weight:700">02
             — Wynajem</span>
@@ -577,15 +161,15 @@ const faqs = [
           <p style="font-size:15px;line-height:1.6;color:#5a5a60;margin:0;text-wrap:pretty">Busy dostawcze i lawety na
             doby lub dłużej — na przeprowadzkę, transport auta czy wyjazd. Zapytaj o dostępność i cennik.</p>
           <span
-            style="margin-top:auto;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;color:#C8102E">Zapytaj
-            o wynajem<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            style="margin-top:auto;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;color:#C8102E">Zobacz
+            więcej<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
               <path d="M5 12h14"></path>
               <path d="m12 5 7 7-7 7"></path>
             </svg></span>
         </a>
 
-        <a id="skutery" class="reveal-on-scroll" href="#kontakt"
+        <a class="reveal-on-scroll" href={`${base}skutery-wodne/`}
           style="background:#fff;border:1px solid #e6e4e0;border-radius:6px;padding:34px;display:flex;flex-direction:column;gap:14px">
           <span style="font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#C8102E;font-weight:700">03
             — Nowość</span>
@@ -593,15 +177,15 @@ const faqs = [
           <p style="font-size:15px;line-height:1.6;color:#5a5a60;margin:0;text-wrap:pretty">Sprzedaż nowych skuterów
             wodnych. Skontaktuj się, aby poznać dostępne modele i terminy dostaw.</p>
           <span
-            style="margin-top:auto;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;color:#C8102E">Zapytaj
-            o modele<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="margin-top:auto;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;color:#C8102E">Zobacz
+            więcej<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
               <path d="M5 12h14"></path>
               <path d="m12 5 7 7-7 7"></path>
             </svg></span>
         </a>
 
-        <a id="pomoc" class="reveal-on-scroll" href="tel:+48791072708"
+        <a class="reveal-on-scroll" href={`${base}pomoc-drogowa/`}
           style="background:#141416;border:1px solid #141416;border-radius:6px;padding:34px;display:flex;flex-direction:column;gap:14px;color:#fff">
           <span style="font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#C8102E;font-weight:700">04
             — W trasie</span>
@@ -609,13 +193,12 @@ const faqs = [
           <p style="font-size:15px;line-height:1.6;color:#b9b9c0;margin:0;text-wrap:pretty">Holowanie i transport aut
             osobowych oraz dostawczych. Jeden telefon i ruszamy — Myślenice i okolice.</p>
           <span
-            style="margin-top:auto;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;color:#C8102E"><svg
-              width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="margin-top:auto;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;color:#C8102E">Zobacz
+            więcej<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
-              <path
-                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-              </path>
-            </svg>Zadzwoń: 791 072 708</span>
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg></span>
         </a>
       </div>
     </div>
@@ -944,182 +527,7 @@ const faqs = [
     </div>
   </section>
 
-  <!-- ============ KONTAKT / STOPKA ============ -->
-  <section id="kontakt" class="contact-section" data-screen-label="Kontakt" style="padding:92px 32px 60px">
-    <div style="max-width:1200px;margin:0 auto">
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:44px">
-        <div style="display:flex;align-items:center;gap:12px">
-          <span style="width:34px;height:2px;background:#C8102E"></span>
-          <span
-            style="font-size:12.5px;letter-spacing:0.24em;text-transform:uppercase;color:#8a8a90;font-weight:600">Kontakt</span>
-        </div>
-        <h2 class="reveal-on-scroll"
-          style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:34px;font-weight:800;margin:0;letter-spacing:-0.01em">
-          Zadzwoń albo wpadnij na plac</h2>
-        <p style="font-size:16px;line-height:1.6;color:#5a5a60;margin:6px 0 0;max-width:560px;text-wrap:pretty">
-          Najszybciej załatwisz sprawę telefonicznie. Jesteśmy przy ul. Tarnówka 3e w Myślenicach — wpadnij obejrzeć
-          auto albo dogadać wynajem czy holowanie.</p>
-      </div>
-
-      <div class="contact-boxes-grid"
-        style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:36px">
-        <a href="tel:+48791072708" class="reveal-on-scroll"
-          style="background:#fff;border:1px solid #e6e4e0;border-radius:6px;padding:22px;display:flex;flex-direction:column;gap:10px">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8102E" stroke-width="1.8"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path
-              d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2">
-            </path>
-            <circle cx="7" cy="17" r="2"></circle>
-            <path d="M9 17h6"></path>
-            <circle cx="17" cy="17" r="2"></circle>
-          </svg>
-          <span style="font-weight:700;font-size:15.5px;color:#141416">Kupno / skup auta</span>
-          <span style="font-weight:800;font-size:17px;color:#C8102E">791 072 708</span>
-        </a>
-        <a href="tel:+48536745745" class="reveal-on-scroll"
-          style="background:#fff;border:1px solid #e6e4e0;border-radius:6px;padding:22px;display:flex;flex-direction:column;gap:10px">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8102E" stroke-width="1.8"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
-            <path d="M15 18H9"></path>
-            <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62L18.3 8.38a1 1 0 0 0-.78-.38H14"></path>
-            <circle cx="17" cy="18" r="2"></circle>
-            <circle cx="7" cy="18" r="2"></circle>
-          </svg>
-          <span style="font-weight:700;font-size:15.5px;color:#141416">Wypożyczalnia</span>
-          <span style="font-weight:800;font-size:17px;color:#C8102E">536 745 745</span>
-        </a>
-        <a href="tel:+48791072708" class="reveal-on-scroll"
-          style="background:#fff;border:1px solid #e6e4e0;border-radius:6px;padding:22px;display:flex;flex-direction:column;gap:10px">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8102E" stroke-width="1.8"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path
-              d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
-            </path>
-          </svg>
-          <span style="font-weight:700;font-size:15.5px;color:#141416">Pomoc drogowa</span>
-          <span style="font-weight:800;font-size:17px;color:#C8102E">791 072 708</span>
-        </a>
-        <a href="tel:+48536745745" class="reveal-on-scroll"
-          style="background:#fff;border:1px solid #e6e4e0;border-radius:6px;padding:22px;display:flex;flex-direction:column;gap:10px">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8102E" stroke-width="1.8"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
-            <path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
-            <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
-          </svg>
-          <span style="font-weight:700;font-size:15.5px;color:#141416">Skutery wodne</span>
-          <span style="font-weight:800;font-size:17px;color:#C8102E">536 745 745</span>
-        </a>
-      </div>
-
-      <div class="contact-details-grid"
-        style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch">
-        <div
-          style="background:#141416;color:#fff;border-radius:6px;padding:36px;display:flex;flex-direction:column;gap:24px">
-          <div style="display:flex;flex-direction:column;gap:14px;font-size:16px;line-height:1.5">
-            <div style="display:flex;flex-direction:column;gap:6px">
-              <span
-                style="font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#8a8a92;font-weight:700">Telefon</span>
-              <div style="display:flex;gap:18px;flex-wrap:wrap">
-                <a href="tel:+48791072708"
-                  style="display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:22px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    style="flex-shrink:0;color:#C8102E">
-                    <path
-                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                    </path>
-                  </svg>791 072 708</a>
-                <a href="tel:+48536745745"
-                  style="display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:22px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    style="flex-shrink:0;color:#C8102E">
-                    <path
-                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                    </path>
-                  </svg>536 745 745</a>
-              </div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:6px">
-              <span
-                style="font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#8a8a92;font-weight:700">Adres</span>
-              <a href="https://maps.app.goo.gl/CguvsHVSYWQ4XeDC7" target="_blank" rel="noopener"
-                style="display:inline-flex;align-items:center;gap:9px"><svg width="16"
-                  height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;color:#C8102E">
-                  <path
-                    d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0">
-                  </path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>ul. Tarnówka 3e, 32-400 Myślenice</a>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:6px">
-              <span
-                style="font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#8a8a92;font-weight:700">Godziny
-                otwarcia</span>
-              <div style="display:flex;flex-direction:column;gap:4px;font-size:15px;color:#c9c9cf">
-                <div style="display:flex;justify-content:space-between;gap:16px;max-width:300px"><span>Poniedziałek –
-                    Piątek</span><span style="font-family:ui-monospace,Menlo,monospace;color:#8a8a92">do
-                    potwierdzenia</span></div>
-                <div style="display:flex;justify-content:space-between;gap:16px;max-width:300px">
-                  <span>Sobota</span><span style="font-family:ui-monospace,Menlo,monospace;color:#8a8a92">do
-                    potwierdzenia</span></div>
-                <div style="display:flex;justify-content:space-between;gap:16px;max-width:300px">
-                  <span>Niedziela</span><span style="color:#8a8a92">zamknięte</span></div>
-              </div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:6px">
-              <span
-                style="font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#8a8a92;font-weight:700">Online</span>
-              <div style="display:flex;gap:18px;flex-wrap:wrap;font-weight:600">
-                <a href="https://mateocars.otomoto.pl/inventory" target="_blank" rel="noopener"
-                  style="display:inline-flex;align-items:center;gap:7px"><svg width="14"
-                    height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;color:#C8102E">
-                    <path d="M15 3h6v6"></path>
-                    <path d="M10 14 21 3"></path>
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  </svg>Otomoto</a>
-                <a href="https://www.facebook.com/p/MATEO-TRANSCARS-100063719133726/" target="_blank" rel="noopener"
-                  style="display:inline-flex;align-items:center;gap:7px"><svg width="14"
-                    height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;color:#C8102E">
-                    <path d="M15 3h6v6"></path>
-                    <path d="M10 14 21 3"></path>
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  </svg>Facebook</a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <a href="https://maps.app.goo.gl/CguvsHVSYWQ4XeDC7" target="_blank" rel="noopener" class="map-wrapper" style="min-height:380px;background:repeating-linear-gradient(45deg,#ececea 0,#ececea 12px,#e3e2df 12px,#e3e2df 24px);border:1px solid #e0dedb;border-radius:6px;display:flex;align-items:center;justify-content:center">
-          <span style="display:inline-flex;align-items:center;gap:8px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#8a8a90;background:#f6f5f3;padding:7px 12px;border:1px solid #e0dedb"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>mapa dojazdu → Google Maps</span>
-        </a>
-      </div>
-      <div
-        style="margin-top:64px;padding-top:24px;border-top:1px solid #e6e4e0;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:#8a8a90">
-        <span>© 2026 Mateo Trans&amp;Cars — ul. Tarnówka 3e, 32-400 Myślenice</span>
-        <span>NIP 9442192633 · REGON 364023737</span>
-      </div>
-    </div>
-  </section>
-
   <script>
-    const menuToggle = document.getElementById('menu-toggle');
-    const mainNav = document.getElementById('main-nav');
-    const hamburgerIcon = document.getElementById('hamburger-icon');
-
-    function setMenu(open) {
-      mainNav.classList.toggle('active', open);
-      hamburgerIcon.classList.toggle('active', open);
-    }
-
-    menuToggle.addEventListener('click', () => setMenu(!mainNav.classList.contains('active')));
-    document.querySelectorAll('.nav-link').forEach((link) => {
-      link.addEventListener('click', () => setMenu(false));
-    });
-
     document.querySelectorAll('.faq-item').forEach((item) => {
       const button = item.querySelector('.faq-toggle');
       const wrapper = item.querySelector('.faq-answer-wrapper');
@@ -1134,14 +542,5 @@ const faqs = [
         }
       });
     });
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) entry.target.classList.add('reveal-in');
-      });
-    }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.reveal-on-scroll').forEach((el) => observer.observe(el));
   </script>
-</body>
-
-</html>
+</Layout>
