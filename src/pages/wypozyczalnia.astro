@@ -226,11 +226,11 @@ const faqs = [
         <p style="font-size:17.5px;line-height:1.65;color:#b9b9c0;margin:0;max-width:520px;text-wrap:pretty">
           Flota busów dostawczych, osobowych oraz lawet gotowa do drogi na doby lub dłużej. Idealne rozwiązanie przy przeprowadzkach, transportowaniu pojazdów lub wyjazdach firmowych.</p>
         <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px">
-          <a href="tel:+48536745745"
-            style="display:inline-flex;align-items:center;gap:10px;background:#C8102E;color:#fff;padding:16px 30px;border-radius:4px;font-weight:700;font-size:15.5px">Zadzwoń i zarezerwuj: 536 745 745
+          <a href={`${base}wypozyczalnia/oferta/`}
+            style="display:inline-flex;align-items:center;gap:10px;background:#C8102E;color:#fff;padding:16px 30px;border-radius:4px;font-weight:700;font-size:15.5px">Zarezerwuj online
           </a>
-          <a href="#calc-section"
-            style="display:inline-flex;align-items:center;gap:10px;border:1px solid #3a3a40;color:#fff;padding:16px 30px;border-radius:4px;font-weight:600;font-size:15.5px">Oblicz koszt najmu</a>
+          <a href="tel:+48536745745"
+            style="display:inline-flex;align-items:center;gap:10px;border:1px solid #3a3a40;color:#fff;padding:16px 30px;border-radius:4px;font-weight:600;font-size:15.5px">Zadzwoń: 536 745 745</a>
         </div>
       </div>
       <div style="min-height:360px;border-radius:6px;overflow:hidden;border:1px solid #2e2e34">
@@ -277,7 +277,7 @@ const faqs = [
               <span style="font-size:13.5px;color:#7a7a80">{item.details}</span>
               <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:16px;border-top:1px solid #f2f0ec">
                 <span style="font-weight:800;color:#C8102E;font-size:16.5px">{item.price}</span>
-                <a href="tel:+48536745745" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#8a8a90">Rezerwuj →</a>
+                <a href={`${base}wypozyczalnia/oferta/`} style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#8a8a90">Rezerwuj →</a>
               </div>
             </div>
           </div>

@@ -1,0 +1,805 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+
+const models = [
+  {
+    id: "yamaha-vx",
+    name: "Yamaha VX Cruiser",
+    brand: "yamaha",
+    power: "125 KM",
+    capacity: "3-osobowy",
+    engine: "TR-1 High Output, 1049 cm³",
+    features: "Wyświetlacz RiDE · duży schowek · tryb Eco · system ErgoLock",
+    price: 59900,
+    priceFormatted: "59 900 zł",
+    details: "Vx Cruiser to synonim komfortu i niezawodności. Idealny dla rodzin oraz osób szukających ekonomicznego, a zarazem dynamicznego skutera do rekreacji.",
+    image: "https://images.pexels.com/photos/33102733/pexels-photo-33102733.jpeg?auto=compress&cs=tinysrgb&w=800"
+  },
+  {
+    id: "seadoo-gti",
+    name: "Sea-Doo GTI SE",
+    brand: "seadoo",
+    power: "130 KM",
+    capacity: "3-osobowy",
+    engine: "Rotax 1630 ACE, 3-cylindrowy",
+    features: "System iBR (hamulec i wsteczny) · głośniki Bluetooth · stopień wejściowy · system LinQ",
+    price: 64500,
+    priceFormatted: "64 500 zł",
+    details: "GTI SE redefiniuje rodzinną zabawę na wodzie. Wyposażony w unikalny system hamowania iBR oraz fabryczne audio Bluetooth, które umili każdą chwilę na fali.",
+    image: "https://images.pexels.com/photos/10364376/pexels-photo-10364376.jpeg?auto=compress&cs=tinysrgb&w=800"
+  },
+  {
+    id: "kawasaki-ultra",
+    name: "Kawasaki Ultra 160",
+    brand: "kawasaki",
+    power: "160 KM",
+    capacity: "3-osobowy",
+    engine: "4-cylindrowy, 1498 cm³",
+    features: "Kadłub o sportowej charakterystyce · kamera wsteczna · regulowana kierownica · wyświetlacz TFT 7\"",
+    price: 71200,
+    priceFormatted: "71 200 zł",
+    details: "Ultra 160 oferuje sportowe osiągi z niespotykaną kontrolą. Nowoczesny kadłub doskonale radzi sobie z falami, a silnik o mocy 160 KM gwarantuje solidną dawkę adrenaliny.",
+    image: "https://images.pexels.com/photos/30200707/pexels-photo-30200707.jpeg?auto=compress&cs=tinysrgb&w=800"
+  }
+];
+---
+
+<Layout
+  title="Oferta skuterów wodnych - Mateo Trans&Cars"
+  description="Wirtualny salon nowych skuterów wodnych Yamaha, Sea-Doo i Kawasaki w Myślenicach. Sprawdź cennik, skonfiguruj dodatki i oblicz ratę finansowania."
+>
+  <style>
+    .skutery-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 120px 24px 60px;
+    }
+    .main-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 32px;
+    }
+    #toggle-filters-btn {
+      display: none;
+    }
+    @media (max-width: 900px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+      .filter-panel-wrapper {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.35s var(--spring-smooth);
+        overflow: hidden;
+      }
+      .filter-panel-wrapper.open {
+        grid-template-rows: 1fr;
+        margin-bottom: 24px;
+      }
+      .filter-panel {
+        position: static !important;
+        min-height: 0;
+      }
+      #toggle-filters-btn {
+        display: flex !important;
+      }
+    }
+    .filter-panel {
+      background: #fff;
+      border: 1px solid #e6e4e0;
+      border-radius: 4px;
+      padding: 24px;
+      position: sticky;
+      top: 110px;
+    }
+    .search-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid #e0dedb;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 14px;
+      background: #f6f5f3;
+      box-sizing: border-box;
+      outline: none;
+      transition: all 0.2s ease;
+      margin-bottom: 20px;
+    }
+    .search-input:focus {
+      border-color: #C8102E;
+      background: #fff;
+    }
+    .filter-group {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #f2f0ec;
+    }
+    .filter-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #8a8a90;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #3a3a40;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    .checkbox-item input {
+      accent-color: #C8102E;
+      cursor: pointer;
+    }
+    .jetski-card {
+      background: #fff;
+      border: 1px solid #e6e4e0;
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .jetski-card:hover {
+      border-color: #C8102E;
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(20, 20, 22, 0.05);
+    }
+    .jetski-spec-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      font-size: 13px;
+      color: #7a7a80;
+      border-top: 1px solid #f2f0ec;
+      padding-top: 12px;
+      margin-top: auto;
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(20, 20, 22, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    @media (max-width: 900px) {
+      .modal-overlay {
+        padding: 12px;
+      }
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 4px;
+      max-width: 960px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      border: 1px solid #e6e4e0;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.15);
+    }
+    .modal-body-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      padding: 36px;
+    }
+    @media (max-width: 900px) {
+      .modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+      }
+      .modal-content {
+        max-width: 100vw;
+        width: 100%;
+        border-radius: 12px 12px 0 0;
+        max-height: 92vh;
+        box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
+      }
+      .modal-body-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 16px;
+      }
+      #modal-img { height: 180px !important; }
+      #modal-title { font-size: 18px !important; }
+      #modal-price { font-size: 22px !important; }
+      .spec-table td { font-size: 12.5px; padding: 7px 0; }
+      .calc-box { padding: 14px; }
+      .slider-header { font-size: 12px; }
+      #calc-monthly-rate { font-size: 18px !important; }
+    }
+    .close-modal {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: #f6f5f3;
+      border: 1px solid #e6e4e0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+    .close-modal:hover {
+      background: #C8102E;
+      color: #fff;
+      border-color: #C8102E;
+    }
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .spec-table td {
+      padding: 10px 0;
+      border-bottom: 1px solid #f2f0ec;
+    }
+    .spec-table td:first-child {
+      font-weight: 700;
+      color: #8a8a90;
+      width: 40%;
+    }
+    .spec-table td:last-child {
+      color: #141416;
+      font-weight: 600;
+    }
+
+    /* Calculator */
+    .calc-box {
+      background: #f6f5f3;
+      border: 1px solid #e6e4e0;
+      border-radius: 4px;
+      padding: 20px;
+      margin-top: 16px;
+    }
+    .slider-group {
+      margin-bottom: 14px;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #5a5a60;
+    }
+    .range-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: #e0dedb;
+      outline: none;
+    }
+    .range-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #C8102E;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .range-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+  </style>
+
+  <div class="skutery-container">
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:36px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="width:34px;height:2px;background:#C8102E"></span>
+        <span style="font-size:12.5px;letter-spacing:0.24em;text-transform:uppercase;color:#8a8a90;font-weight:600">Wirtualny salon skuterów</span>
+      </div>
+      <h1 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:36px;font-weight:800;margin:0;letter-spacing:-0.01em">
+        Oferta nowych skuterów wodnych
+      </h1>
+      <p style="font-size:15px;color:#5a5a60;margin:0;max-width:680px">
+        Wybierz z katalogu model skutera wodnego, skonfiguruj opcjonalne akcesoria oraz przyczepkę, oblicz szacowaną ratę leasingu i wyślij specyfikację do wyceny.
+      </p>
+    </div>
+
+    <button id="toggle-filters-btn" style="display:none;background:#141416;color:#fff;border:none;padding:12px 20px;border-radius:4px;font-weight:700;font-size:14px;cursor:pointer;align-items:center;justify-content:center;gap:10px;width:100%;margin-bottom:20px;box-sizing:border-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+      <span>Filtry i sortowanie</span>
+    </button>
+
+    <div class="main-grid">
+      <!-- Filter Sidebar -->
+      <div class="filter-panel-wrapper" id="filter-wrapper">
+        <div class="filter-panel">
+          <input type="text" id="search-box" class="search-input" placeholder="Szukaj modelu..." />
+
+        <!-- Brand -->
+        <div class="filter-group">
+          <span class="filter-label">Producent</span>
+          <label class="checkbox-item"><input type="checkbox" class="brand-filter" value="yamaha" checked /> Yamaha</label>
+          <label class="checkbox-item"><input type="checkbox" class="brand-filter" value="seadoo" checked /> Sea-Doo</label>
+          <label class="checkbox-item"><input type="checkbox" class="brand-filter" value="kawasaki" checked /> Kawasaki</label>
+        </div>
+
+        <!-- Sorting -->
+        <div>
+          <span class="filter-label">Sortowanie</span>
+          <select id="sort-select" style="width:100%;padding:10px;border-radius:4px;border:1px solid #e0dedb;background:#f6f5f3;font-family:inherit;font-size:13.5px;outline:none">
+            <option value="price-asc">Cena: rosnąco</option>
+            <option value="price-desc">Cena: malejąco</option>
+            <option value="power-desc">Moc silnika: najwyższa</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+      <!-- Showroom Gallery -->
+      <div>
+        <div id="jetski-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px">
+          {models.map((item) => (
+            <div class="jetski-card" data-id={item.id} data-name={item.name} data-brand={item.brand} data-price={item.price} data-power={item.power}>
+              <div style="height:180px;overflow:hidden;position:relative">
+                <img src={item.image} alt={item.name} style="width:100%;height:100%;object-fit:cover;display:block" />
+                <span style="position:absolute;top:12px;left:12px;background:#C8102E;color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;padding:5px 9px;border-radius:2px">Dostępny</span>
+              </div>
+              <div style="padding:20px;display:flex;flex-direction:column;flex-grow:1">
+                <h3 style="font-size:17.5px;font-weight:700;margin:0 0-4px;color:#141416">{item.name}</h3>
+                <span style="font-size:13px;color:#8a8a90;font-weight:600">{item.engine}</span>
+                
+                <div class="jetski-spec-grid">
+                  <div>Moc: <strong>{item.power}</strong></div>
+                  <div>Pojemność: <strong>{item.capacity}</strong></div>
+                </div>
+
+                <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #f2f0ec;margin-top:16px;padding-top:16px">
+                  <span style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:18px;font-weight:800;color:#C8102E">{item.priceFormatted}</span>
+                  <span style="font-size:12.5px;font-weight:700;color:#8a8a90">Konfiguruj →</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div id="no-jetski" style="display:none;text-align:center;padding:80px 24px;border:1px dashed #e6e4e0;border-radius:4px;color:#8a8a90;font-size:15px">
+          Brak skuterów pasujących do wybranych filtrów. Spróbuj zmienić parametry wyszukiwania.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DETAIL MODAL ============ -->
+  <div id="jetski-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-modal" id="close-modal-btn">✕</button>
+      
+      <div class="modal-body-grid" id="modal-body-grid">
+        <!-- Left: Image & Specs -->
+        <div>
+          <div style="height:260px;overflow:hidden;border-radius:4px;border:1px solid #e6e4e0;margin-bottom:24px">
+            <img id="modal-img" src="" alt="Skuter wodny" style="width:100%;height:100%;object-fit:cover;display:block" />
+          </div>
+
+          <h2 id="modal-title" style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:26px;font-weight:800;margin:0 0 6px;color:#141416">Yamaha VX Cruiser</h2>
+          <p id="modal-desc" style="font-size:14.5px;line-height:1.6;color:#5a5a60;margin:0 0 24px">Opis...</p>
+
+          <table class="spec-table">
+            <tbody>
+              <tr>
+                <td>Model i silnik</td>
+                <td id="modal-spec-engine">--</td>
+              </tr>
+              <tr>
+                <td>Moc silnika</td>
+                <td id="modal-spec-power">--</td>
+              </tr>
+              <tr>
+                <td>Liczba miejsc</td>
+                <td id="modal-spec-capacity">--</td>
+              </tr>
+              <tr>
+                <td>Wyposażenie</td>
+                <td id="modal-spec-features">--</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Right: Configurations, Financing Calculator & Inquiry Form -->
+        <div>
+          <!-- Base & Configuration Price -->
+          <div style="background:#141416;color:#fff;border-radius:4px;padding:20px;margin-bottom:20px;text-align:center">
+            <span style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a92;font-weight:700">Wycena Konfiguracji (Brutto)</span>
+            <div id="modal-price" style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:32px;font-weight:800;color:#fff;margin:6px 0;letter-spacing:-0.01em">-- zł</div>
+            <span id="modal-base-price" style="font-size:12.5px;color:#a0a0a8">Cena bazowa: -- zł</span>
+          </div>
+
+          <!-- Addons / Accessories Selection -->
+          <div style="background:#f6f5f3;border:1px solid #e6e4e0;border-radius:4px;padding:16px;margin-bottom:20px">
+            <h4 style="font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#141416;margin:0 0 12px">
+              Doposażenie dodatkowe
+            </h4>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <label class="checkbox-item" style="margin:0;font-size:13.5px">
+                <input type="checkbox" class="addon-cb" value="trailer" data-price="4500" />
+                <span>Przyczepka transportowa płozowa (+4 500 zł)</span>
+              </label>
+              <label class="checkbox-item" style="margin:0;font-size:13.5px">
+                <input type="checkbox" class="addon-cb" value="cover" data-price="1500" />
+                <span>Oryginalny pokrowiec ochronny (+1 500 zł)</span>
+              </label>
+              <label class="checkbox-item" style="margin:0;font-size:13.5px">
+                <input type="checkbox" class="addon-cb" value="audio" data-price="3000" />
+                <span>System audio Bluetooth (+3 000 zł)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Financing Calculator -->
+          <div class="calc-box">
+            <h4 style="font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#141416;margin:0 0 14px">
+              Szacowanie leasingu / kredytu
+            </h4>
+            
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Wpłata własna</span>
+                <span id="calc-own-pct">20%</span>
+              </div>
+              <input type="range" id="slider-own" min="0" max="50" step="5" value="20" class="range-slider" />
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:#8a8a90;margin-top:4px">
+                <span>0% (0 zł)</span>
+                <span id="calc-own-val">-- zł</span>
+              </div>
+            </div>
+
+            <div class="slider-group" style="margin-bottom:14px">
+              <div class="slider-header">
+                <span>Okres spłaty</span>
+                <span id="calc-months-val">48 miesięcy</span>
+              </div>
+              <input type="range" id="slider-months" min="24" max="84" step="12" value="48" class="range-slider" />
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:#8a8a90;margin-top:4px">
+                <span>24 msc</span>
+                <span>84 msc</span>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:12px;border-top:1px solid #e0dedb">
+              <span style="font-weight:700;font-size:13.5px;color:#5a5a60">Szacowana rata:</span>
+              <div style="text-align:right">
+                <span id="calc-monthly-rate" style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:22px;font-weight:800;color:#C8102E">-- zł</span>
+                <span style="display:block;font-size:10.5px;color:#8a8a90">miesięcznie netto</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Form -->
+          <form id="inquiry-form" style="margin-top:20px;display:flex;flex-direction:column;gap:10px">
+            <h4 style="font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#141416;margin:0">
+              Zapytaj o wycenę zestawu
+            </h4>
+            <input type="text" id="inquiry-name" placeholder="Imię i nazwisko" class="input-field" style="background:#f6f5f3;padding:11px;border:1px solid #e0dedb;font-family:inherit;font-size:13.5px;border-radius:4px" required />
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <input type="tel" id="inquiry-phone" placeholder="Telefon" class="input-field" style="background:#f6f5f3;padding:11px;border:1px solid #e0dedb;font-family:inherit;font-size:13.5px;border-radius:4px" required />
+              <input type="email" id="inquiry-email" placeholder="E-mail" class="input-field" style="background:#f6f5f3;padding:11px;border:1px solid #e0dedb;font-family:inherit;font-size:13.5px;border-radius:4px" required />
+            </div>
+            <textarea id="inquiry-msg" placeholder="Dzień dobry, piszę w sprawie..." class="input-field" style="background:#f6f5f3;padding:11px;border:1px solid #e0dedb;font-family:inherit;font-size:13.5px;border-radius:4px;min-height:60px;resize:vertical" required></textarea>
+            <button type="submit" class="phone-btn" style="background:#C8102E;color:#fff;border:none;padding:12px;border-radius:4px;font-weight:700;font-size:14px;cursor:pointer;text-align:center">
+              Wyślij zapytanie o skuter
+            </button>
+          </form>
+          
+          <div id="inquiry-success" style="display:none;background:#e6f4ea;border:1px solid #c2e7c9;color:#137333;padding:16px;border-radius:4px;margin-top:16px;text-align:center;font-weight:700;font-size:14px">
+            Specyfikacja została przesłana. Handlowiec skontaktuje się wkrótce!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ JAVASCRIPT ============ -->
+  <script>
+    interface JetSki {
+      id: string;
+      name: string;
+      brand: string;
+      power: string;
+      capacity: string;
+      engine: string;
+      features: string;
+      price: number;
+      priceFormatted: string;
+      details: string;
+      image: string;
+    }
+
+    const jetskiDataList: JetSki[] = [
+      {
+        id: "yamaha-vx",
+        name: "Yamaha VX Cruiser",
+        brand: "yamaha",
+        power: "125 KM",
+        capacity: "3-osobowy",
+        engine: "TR-1 High Output, 1049 cm³",
+        features: "Wyświetlacz RiDE · duży schowek · tryb Eco · system ErgoLock",
+        price: 59900,
+        priceFormatted: "59 900 zł",
+        details: "Vx Cruiser to synonim komfortu i niezawodności. Idealny dla rodzin oraz osób szukających ekonomicznego, a zarazem dynamicznego skutera do rekreacji.",
+        image: "https://images.pexels.com/photos/33102733/pexels-photo-33102733.jpeg?auto=compress&cs=tinysrgb&w=800"
+      },
+      {
+        id: "seadoo-gti",
+        name: "Sea-Doo GTI SE",
+        brand: "seadoo",
+        power: "130 KM",
+        capacity: "3-osobowy",
+        engine: "Rotax 1630 ACE, 3-cylindrowy",
+        features: "System iBR (hamulec i wsteczny) · głośniki Bluetooth · stopień wejściowy · system LinQ",
+        price: 64500,
+        priceFormatted: "64 500 zł",
+        details: "GTI SE redefiniuje rodzinną zabawę na wodzie. Wyposażony w unikalny system hamowania iBR oraz fabryczne audio Bluetooth, które umili każdą chwilę na fali.",
+        image: "https://images.pexels.com/photos/10364376/pexels-photo-10364376.jpeg?auto=compress&cs=tinysrgb&w=800"
+      },
+      {
+        id: "kawasaki-ultra",
+        name: "Kawasaki Ultra 160",
+        brand: "kawasaki",
+        power: "160 KM",
+        capacity: "3-osobowy",
+        engine: "4-cylindrowy, 1498 cm³",
+        features: "Kadłub o sportowej charakterystyce · kamera wsteczna · regulowana kierownica · wyświetlacz TFT 7\"",
+        price: 71200,
+        priceFormatted: "71 200 zł",
+        details: "Ultra 160 oferuje sportowe osiągi z niespotykaną kontrolą. Nowoczesny kadłub doskonale radzi sobie z falami, a silnik o mocy 160 KM gwarantuje solidną dawkę adrenaliny.",
+        image: "https://images.pexels.com/photos/30200707/pexels-photo-30200707.jpeg?auto=compress&cs=tinysrgb&w=800"
+      }
+    ];
+
+    let activeJetski: JetSki | null = null;
+
+    // DOM selectors
+    const searchBox = document.getElementById('search-box') as HTMLInputElement;
+    const brandFilters = document.querySelectorAll('.brand-filter');
+    const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
+    const jetskiGrid = document.getElementById('jetski-grid');
+    const noJetskiText = document.getElementById('no-jetski');
+
+    // Filter and Sort Logic
+    function filterAndSortJetskis() {
+      const query = searchBox.value.toLowerCase().trim();
+      const activeBrands = Array.from(brandFilters).filter(i => (i as HTMLInputElement).checked).map(i => (i as HTMLInputElement).value);
+      
+      const cards = Array.from(document.querySelectorAll('.jetski-card'));
+      let visibleCount = 0;
+
+      // Filter
+      cards.forEach((card) => {
+        const name = (card.getAttribute('data-name') || '').toLowerCase();
+        const brand = card.getAttribute('data-brand') || '';
+
+        const matchesQuery = name.includes(query);
+        const matchesBrand = activeBrands.includes(brand);
+
+        if (matchesQuery && matchesBrand) {
+          (card as HTMLElement).style.display = 'flex';
+          visibleCount++;
+        } else {
+          (card as HTMLElement).style.display = 'none';
+        }
+      });
+
+      if (noJetskiText) noJetskiText.style.display = visibleCount === 0 ? 'block' : 'none';
+
+      // Sort visible cards in DOM
+      const sortedCards = cards
+        .filter(card => (card as HTMLElement).style.display !== 'none')
+        .sort((a, b) => {
+          const sortVal = sortSelect.value;
+          if (sortVal === 'price-asc') {
+            return parseInt(a.getAttribute('data-price') || '0') - parseInt(b.getAttribute('data-price') || '0');
+          } else if (sortVal === 'price-desc') {
+            return parseInt(b.getAttribute('data-price') || '0') - parseInt(a.getAttribute('data-price') || '0');
+          } else if (sortVal === 'power-desc') {
+            return parseInt(b.getAttribute('data-power') || '0') - parseInt(a.getAttribute('data-power') || '0');
+          }
+          return 0;
+        });
+
+      if (jetskiGrid) {
+        sortedCards.forEach(card => jetskiGrid.appendChild(card));
+      }
+    }
+
+    searchBox?.addEventListener('input', filterAndSortJetskis);
+    brandFilters.forEach(el => el.addEventListener('change', filterAndSortJetskis));
+    sortSelect?.addEventListener('change', filterAndSortJetskis);
+
+    // Initial Filter Run
+    filterAndSortJetskis();
+
+    // Modal DOM Selectors
+    const modal = document.getElementById('jetski-modal') as HTMLElement;
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modalImg = document.getElementById('modal-img') as HTMLImageElement;
+    const modalTitle = document.getElementById('modal-title') as HTMLElement;
+    const modalDesc = document.getElementById('modal-desc') as HTMLElement;
+    const modalPrice = document.getElementById('modal-price') as HTMLElement;
+    const modalBasePrice = document.getElementById('modal-base-price') as HTMLElement;
+
+    const modalSpecEngine = document.getElementById('modal-spec-engine') as HTMLElement;
+    const modalSpecPower = document.getElementById('modal-spec-power') as HTMLElement;
+    const modalSpecCapacity = document.getElementById('modal-spec-capacity') as HTMLElement;
+    const modalSpecFeatures = document.getElementById('modal-spec-features') as HTMLElement;
+
+    // Addon checkboxes
+    const addonCbs = document.querySelectorAll('.addon-cb');
+
+    // Calculator DOM
+    const sliderOwn = document.getElementById('slider-own') as HTMLInputElement;
+    const sliderMonths = document.getElementById('slider-months') as HTMLInputElement;
+    const calcOwnPct = document.getElementById('calc-own-pct') as HTMLElement;
+    const calcOwnVal = document.getElementById('calc-own-val') as HTMLElement;
+    const calcMonthsVal = document.getElementById('calc-months-val') as HTMLElement;
+    const calcMonthlyRate = document.getElementById('calc-monthly-rate') as HTMLElement;
+
+    // Inquiry Form DOM
+    const inquiryForm = document.getElementById('inquiry-form') as HTMLFormElement;
+    const inquirySuccess = document.getElementById('inquiry-success');
+
+    function calculateFinancing() {
+      if (!activeJetski) return;
+
+      // Base price
+      const basePrice = activeJetski.price;
+      
+      // Addons
+      let addonsSum = 0;
+      addonCbs.forEach((cb) => {
+        if ((cb as HTMLInputElement).checked) {
+          addonsSum += parseInt(cb.getAttribute('data-price') || '0');
+        }
+      });
+
+      const price = basePrice + addonsSum;
+      
+      const ownPct = parseInt(sliderOwn.value);
+      const months = parseInt(sliderMonths.value);
+
+      const ownValue = Math.round(price * (ownPct / 100));
+      const financedAmount = price - ownValue;
+
+      // Rate formula (approx 9.8% interest rate)
+      const annualRate = 0.098;
+      const r = annualRate / 12;
+      const n = months;
+
+      let monthlyPayment = 0;
+      if (financedAmount > 0) {
+        monthlyPayment = Math.round(financedAmount * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1));
+      }
+
+      // Update UI
+      const formatter = new Intl.NumberFormat('pl-PL');
+      modalPrice.textContent = `${formatter.format(price)} zł`;
+      calcOwnPct.textContent = `${ownPct}%`;
+      calcOwnVal.textContent = `${ownValue.toLocaleString('pl-PL')} zł`;
+      calcMonthsVal.textContent = `${months} miesięcy (${Math.round(months/12)} lat)`;
+      calcMonthlyRate.textContent = `${monthlyPayment.toLocaleString('pl-PL')} zł`;
+    }
+
+    addonCbs.forEach(cb => cb.addEventListener('change', calculateFinancing));
+    sliderOwn?.addEventListener('input', calculateFinancing);
+    sliderMonths?.addEventListener('input', calculateFinancing);
+
+    // Open Modal
+    document.querySelectorAll('.jetski-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        const id = card.getAttribute('data-id');
+        const found = jetskiDataList.find(c => c.id === id);
+        if (found) {
+          activeJetski = found;
+          
+          // Populate data
+          modalImg.src = found.image;
+          modalImg.alt = found.name;
+          modalTitle.textContent = found.name;
+          modalDesc.textContent = found.details;
+          
+          const formatter = new Intl.NumberFormat('pl-PL');
+          modalPrice.textContent = found.priceFormatted;
+          modalBasePrice.textContent = `Cena bazowa: ${found.priceFormatted}`;
+
+          modalSpecEngine.textContent = found.engine;
+          modalSpecPower.textContent = found.power;
+          modalSpecCapacity.textContent = found.capacity;
+          modalSpecFeatures.textContent = found.features;
+
+          const msgInput = document.getElementById('inquiry-msg') as HTMLTextAreaElement;
+          if (msgInput) {
+            msgInput.value = `Dzień dobry, piszę w sprawie oferty na skuter wodny: ${found.name}. Proszę o przesłanie kalkulacji finansowania dla wybranej specyfikacji.`;
+          }
+
+          // Reset checkboxes
+          addonCbs.forEach(cb => (cb as HTMLInputElement).checked = false);
+
+          // Reset success alert
+          if (inquirySuccess) inquirySuccess.style.display = 'none';
+          if (inquiryForm) inquiryForm.style.display = 'flex';
+
+          // Reset calculator values
+          sliderOwn.value = "20";
+          sliderMonths.value = "48";
+          calculateFinancing();
+
+          // Display modal
+          if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Lock background scroll
+          }
+        }
+      });
+    });
+
+    // Close Modal
+    function closeModal() {
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = ''; // Unlock background scroll
+        activeJetski = null;
+      }
+    }
+
+    closeModalBtn?.addEventListener('click', closeModal);
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Handle form submit inside modal
+    inquiryForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // Simulate sending inquiry
+      if (inquiryForm) inquiryForm.style.display = 'none';
+      if (inquirySuccess) inquirySuccess.style.display = 'none';
+      if (inquirySuccess) inquirySuccess.style.display = 'block';
+    });
+
+    // Toggle Filters for Mobile
+    const toggleFiltersBtn = document.getElementById('toggle-filters-btn');
+    const filterWrapper = document.getElementById('filter-wrapper');
+    if (toggleFiltersBtn && filterWrapper) {
+      toggleFiltersBtn.addEventListener('click', () => {
+        filterWrapper.classList.toggle('open');
+        const isOpen = filterWrapper.classList.contains('open');
+        toggleFiltersBtn.style.background = isOpen ? '#C8102E' : '#141416';
+      });
+    }
+  </script>
+</Layout>

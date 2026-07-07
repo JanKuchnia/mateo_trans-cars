@@ -1,0 +1,547 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+
+const fleet = [
+  { id: "bus-winda", name: "Bus dostawczy 3.5t (Winda)", type: "busy", details: "Pojemność 14 m³ · winda załadowcza · prawo jazdy kat. B", price: "od 180 zł / doba", image: "https://images.pexels.com/photos/6407553/pexels-photo-6407553.jpeg?auto=compress&cs=tinysrgb&w=800", rate: 180 },
+  { id: "bus-krotki", name: "Bus dostawczy (Krótki)", type: "busy", details: "Pojemność 8 m³ · zwrotny i łatwy w parkowaniu · prawo jazdy kat. B", price: "od 140 zł / doba", image: "https://images.pexels.com/photos/7363131/pexels-photo-7363131.jpeg?auto=compress&cs=tinysrgb&w=800", rate: 140 },
+  { id: "laweta-auto", name: "Laweta samochodowa 3.5t", type: "lawety", details: "Masa całkowita do 3500 kg · wyciągarka · najazdy aluminiowe", price: "od 220 zł / doba", image: "https://images.pexels.com/photos/38095094/pexels-photo-38095094.jpeg?auto=compress&cs=tinysrgb&w=800", rate: 220 },
+  { id: "bus-mikrobus", name: "Bus 9-osobowy (Mikrobus)", type: "busy", details: "Komfortowa klimatyzacja · tempomat · idealny na wyjazdy grupowe", price: "od 200 zł / doba", image: "https://images.pexels.com/photos/33384858/pexels-photo-33384858.jpeg?auto=compress&cs=tinysrgb&w=800", rate: 200 },
+  { id: "przyczepa-laweta", name: "Przyczepa laweta dwuosiowa", type: "lawety", details: "Długość 4.5m · DMC do 2700kg · w zestawie pasy transportowe", price: "od 90 zł / doba", image: "https://images.pexels.com/photos/33248089/pexels-photo-33248089.jpeg?auto=compress&cs=tinysrgb&w=800", rate: 90 }
+];
+---
+
+<Layout
+  title="Oferta i rezerwacja online - Wypożyczalnia Mateo Trans&Cars"
+  description="Wybierz pojazdy, określ termin wynajmu i wyślij zapytanie o rezerwację online. Szybka wycena, rabaty do 15% na wynajem długoterminowy."
+>
+  <style>
+    .offer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 120px 24px 60px;
+    }
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    .filter-tab {
+      background: #fff;
+      border: 1px solid #e6e4e0;
+      color: #5a5a60;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .filter-tab.active {
+      background: #C8102E;
+      color: #fff;
+      border-color: #C8102E;
+    }
+    .filter-tab:hover:not(.active) {
+      background: #f6f5f3;
+      border-color: #c0beba;
+      color: #141416;
+    }
+    .vehicle-card {
+      background: #fff;
+      border: 1px solid #e6e4e0;
+      border-radius: 4px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 20px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @media (max-width: 640px) {
+      .vehicle-card {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .vehicle-card img {
+        height: 160px !important;
+      }
+    }
+    .vehicle-card:hover {
+      border-color: #C8102E;
+      box-shadow: 0 8px 24px rgba(20, 20, 22, 0.04);
+      transform: translateY(-2px);
+    }
+    .btn-add {
+      background: #141416;
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 13.5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .btn-add:hover {
+      background: #C8102E;
+    }
+    .btn-add.selected {
+      background: #e6f4ea;
+      color: #137333;
+      border: 1px solid #c2e7c9;
+      cursor: default;
+    }
+    .sidebar-panel {
+      background: #fff;
+      border: 1px solid #e6e4e0;
+      border-radius: 4px;
+      padding: 24px;
+      position: sticky;
+      top: 110px;
+    }
+    .input-field {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e0dedb;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 14.5px;
+      background: #f6f5f3;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .input-field:focus {
+      border-color: #C8102E;
+      background: #fff;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px dashed #e6e4e0;
+    }
+    .success-panel {
+      display: none;
+      background: #fff;
+      border: 1px solid #e6e4e0;
+      border-radius: 4px;
+      padding: 48px;
+      text-align: center;
+      max-width: 600px;
+      margin: 120px auto 60px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.03);
+    }
+  </style>
+
+  <!-- ============ INTERACTIVE VIEW ============ -->
+  <div id="main-view" class="offer-container">
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:36px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="width:34px;height:2px;background:#C8102E"></span>
+        <span style="font-size:12.5px;letter-spacing:0.24em;text-transform:uppercase;color:#8a8a90;font-weight:600">Rezerwacja online</span>
+      </div>
+      <h1 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:36px;font-weight:800;margin:0;letter-spacing:-0.01em">
+        Wybierz pojazdy i wyślij zapytanie
+      </h1>
+      <p style="font-size:15px;color:#5a5a60;margin:0;max-width:680px">
+        Zaznacz interesujące Cię pojazdy z floty, wskaż zakres dat, a nasz system natychmiast wyliczy orientacyjny koszt najmu z uwzględnieniem progowych rabatów.
+      </p>
+    </div>
+
+    <div class="grid-layout">
+      <!-- Catalog (Left Column) -->
+      <div>
+        <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">
+          <button class="filter-tab active" data-category="all">Wszystkie pojazdy</button>
+          <button class="filter-tab" data-category="busy">Busy (Dostawcze & Osobowe)</button>
+          <button class="filter-tab" data-category="lawety">Lawety & Przyczepy</button>
+        </div>
+
+        <div id="fleet-list" style="display:flex;flex-direction:column;gap:18px">
+          {fleet.map((item) => (
+            <div class="vehicle-card" data-id={item.id} data-type={item.type} data-name={item.name} data-rate={item.rate}>
+              <div style="height:100%;min-height:140px;overflow:hidden">
+                <img src={item.image} alt={item.name} style="width:100%;height:100%;object-fit:cover;display:block" />
+              </div>
+              <div style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+                <div>
+                  <h3 style="font-size:18px;font-weight:700;margin:0 0 6px;color:#141416">{item.name}</h3>
+                  <p style="font-size:13.5px;color:#6a6a70;margin:0 0 16px">{item.details}</p>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+                  <span style="font-size:17px;font-weight:800;color:#C8102E">{item.price}</span>
+                  <button class="btn-add" data-id={item.id}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Dodaj do zapytania
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Booking inquiry sidebar (Right Column) -->
+      <div class="sidebar-panel">
+        <h2 style="font-size:20px;font-weight:800;margin:0 0 20px;border-bottom:2px solid #141416;padding-bottom:10px;color:#141416">
+          Zapytanie rezerwacyjne
+        </h2>
+
+        <!-- Step 1: Dates -->
+        <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px">
+          <div>
+            <label style="display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#8a8a90;margin-bottom:6px">Data odbioru</label>
+            <input type="date" id="start-date" class="input-field" />
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#8a8a90;margin-bottom:6px">Data zwrotu</label>
+            <input type="date" id="end-date" class="input-field" />
+          </div>
+          <div id="days-count-bar" style="display:none;background:#f6f5f3;padding:10px 14px;border-radius:4px;font-size:13.5px;color:#141416;font-weight:600">
+            Czas wynajmu: <span id="days-count" style="color:#C8102E">0 dób</span>
+          </div>
+        </div>
+
+        <!-- Step 2: Selected vehicles -->
+        <div style="margin-bottom:24px">
+          <label style="display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#8a8a90;margin-bottom:10px">Wybrane pojazdy (<span id="cart-count">0</span>)</label>
+          <div id="cart-items-list" style="display:flex;flex-direction:column;color:#5a5a60;font-size:14px">
+            <div id="cart-empty" style="padding:16px 0;text-align:center;color:#8a8a90">
+              Koszyk zapytania jest pusty. Dodaj pojazd z listy po lewej.
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Calculation -->
+        <div style="background:#f6f5f3;border-radius:4px;padding:16px;margin-bottom:24px">
+          <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#6a6a70;margin-bottom:6px">
+            <span>Suma stawek bazowych:</span>
+            <span id="subtotal-price">0 zł / dobę</span>
+          </div>
+          <div id="discount-row" style="display:none;justify-content:space-between;font-size:13.5px;color:#137333;margin-bottom:12px;font-weight:600">
+            <span>Rabat długoterminowy (<span id="discount-pct">0</span>%):</span>
+            <span id="discount-value">-0 zł</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:12px;border-top:1px solid #e0dedb">
+            <span style="font-weight:700;font-size:15px;color:#141416">Orientacyjny koszt:</span>
+            <span id="total-price" style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:24px;font-weight:800;color:#C8102E">0 zł</span>
+          </div>
+        </div>
+
+        <!-- Step 4: User info & submit -->
+        <form id="booking-form" style="display:flex;flex-direction:column;gap:12px">
+          <input type="text" id="user-name" placeholder="Imię i nazwisko" class="input-field" required />
+          <input type="tel" id="user-phone" placeholder="Numer telefonu" class="input-field" required />
+          <input type="email" id="user-email" placeholder="Adres e-mail" class="input-field" required />
+          <textarea id="user-notes" placeholder="Wiadomość / uwagi do rezerwacji" class="input-field" style="min-height:80px;resize:vertical"></textarea>
+          
+          <button type="submit" id="submit-booking" class="phone-btn" style="background:#C8102E;color:#fff;border:none;padding:14px;border-radius:4px;font-weight:700;font-size:14.5px;cursor:pointer;text-align:center;display:block;width:100%;box-sizing:border-box;margin-top:10px">
+            Wyślij zapytanie o rezerwację
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SUCCESS STATE ============ -->
+  <div id="success-view" class="success-panel">
+    <div style="width:64px;height:64px;background:#e6f4ea;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#137333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+    <h2 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:28px;font-weight:800;margin:0 0 12px;color:#141416">
+      Zapytanie zostało wysłane!
+    </h2>
+    <p style="font-size:15.5px;line-height:1.6;color:#5a5a60;margin:0 0 24px">
+      Dziękujemy za przesłanie zapytania. Wstępnie zarezerwowaliśmy wybrane pojazdy. Skontaktujemy się telefonicznie w ciągu najbliższej godziny w celu potwierdzenia dostępności i sfinalizowania rezerwacji.
+    </p>
+    <div style="background:#f6f5f3;border:1px solid #e6e4e0;border-radius:4px;padding:18px;text-align:left;font-size:14px;margin-bottom:32px">
+      <div style="margin-bottom:8px"><strong>Numer referencyjny:</strong> <span id="ref-number" style="font-family:ui-monospace,monospace;color:#C8102E;font-weight:700">#MATEO-10023</span></div>
+      <div style="margin-bottom:8px"><strong>Wybrane pojazdy:</strong> <span id="success-vehicles">---</span></div>
+      <div><strong>Termin:</strong> <span id="success-dates">---</span></div>
+    </div>
+    <a href={`${base}wypozyczalnia/`} class="phone-btn" style="display:inline-block;background:#141416;color:#fff;padding:12px 24px;border-radius:4px;font-weight:700;font-size:14px">
+      Wróć do wypożyczalni
+    </a>
+  </div>
+
+  <!-- ============ JAVASCRIPT ============ -->
+  <script>
+    interface CartItem {
+      id: string;
+      name: string;
+      rate: number;
+    }
+
+    // Set minimum date to today for pickers
+    const today = new Date().toISOString().split('T')[0];
+    const startDateInput = document.getElementById('start-date') as HTMLInputElement;
+    const endDateInput = document.getElementById('end-date') as HTMLInputElement;
+    if (startDateInput) startDateInput.min = today;
+    if (endDateInput) endDateInput.min = today;
+
+    // State
+    const cart: CartItem[] = [];
+
+    // DOM Elements
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    const vehicleCards = document.querySelectorAll('.vehicle-card');
+    const addButtons = document.querySelectorAll('.btn-add');
+    const cartItemsList = document.getElementById('cart-items-list');
+    const cartEmpty = document.getElementById('cart-empty');
+    const cartCountText = document.getElementById('cart-count');
+    const daysCountBar = document.getElementById('days-count-bar');
+    const daysCountText = document.getElementById('days-count');
+    const subtotalText = document.getElementById('subtotal-price');
+    const discountRow = document.getElementById('discount-row');
+    const discountPctText = document.getElementById('discount-pct');
+    const discountValText = document.getElementById('discount-value');
+    const totalPriceText = document.getElementById('total-price');
+    const bookingForm = document.getElementById('booking-form') as HTMLFormElement;
+    const mainView = document.getElementById('main-view');
+    const successView = document.getElementById('success-view');
+
+    // 1. FILTERING
+    filterTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        filterTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const cat = tab.getAttribute('data-category');
+        vehicleCards.forEach((card) => {
+          const type = card.getAttribute('data-type');
+          if (cat === 'all' || type === cat) {
+            (card as HTMLElement).style.display = 'grid';
+          } else {
+            (card as HTMLElement).style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // 2. DATE LOGIC & CALCULATIONS
+    function calculateDays(): number {
+      const startVal = startDateInput.value;
+      const endVal = endDateInput.value;
+      if (!startVal || !endVal) return 0;
+
+      const start = new Date(startVal);
+      const end = new Date(endVal);
+      const diffTime = end.getTime() - start.getTime();
+      if (diffTime < 0) {
+        endDateInput.value = startDateInput.value;
+        return 1;
+      }
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays === 0 ? 1 : diffDays; // Minimum 1 day
+    }
+
+    function updateCalculations() {
+      const days = calculateDays();
+      
+      // Update days UI
+      if (days > 0 && daysCountBar && daysCountText) {
+        daysCountBar.style.display = 'block';
+        daysCountText.textContent = days === 1 ? `1 doba` : `${days} dób`;
+      } else if (daysCountBar) {
+        daysCountBar.style.display = 'none';
+      }
+
+      // Calculate total base rate per day
+      let dailySubtotal = 0;
+      cart.forEach(item => {
+        dailySubtotal += item.rate;
+      });
+
+      if (subtotalText) subtotalText.textContent = `${dailySubtotal} zł / dobę`;
+
+      // Discount threshold
+      let discountPct = 0;
+      if (days >= 4 && days <= 7) discountPct = 10;
+      else if (days >= 8) discountPct = 15;
+
+      const baseTotal = dailySubtotal * (days || 1);
+      const discountValue = Math.round(baseTotal * (discountPct / 100));
+      const grandTotal = baseTotal - discountValue;
+
+      // Update discount row UI
+      if (discountPct > 0 && discountRow && discountPctText && discountValText) {
+        discountRow.style.display = 'flex';
+        discountPctText.textContent = discountPct.toString();
+        discountValText.textContent = `-${discountValue.toLocaleString('pl-PL')} zł`;
+      } else if (discountRow) {
+        discountRow.style.display = 'none';
+      }
+
+      // Update grand total
+      if (totalPriceText) {
+        totalPriceText.textContent = `${grandTotal.toLocaleString('pl-PL')} zł`;
+      }
+    }
+
+    startDateInput.addEventListener('change', () => {
+      if (startDateInput.value) {
+        endDateInput.min = startDateInput.value;
+        if (!endDateInput.value || endDateInput.value < startDateInput.value) {
+          endDateInput.value = startDateInput.value;
+        }
+      }
+      updateCalculations();
+    });
+
+    endDateInput.addEventListener('change', updateCalculations);
+
+    // 3. CART ACTIONS
+    function renderCart() {
+      if (!cartItemsList || !cartEmpty || !cartCountText) return;
+
+      cartItemsList.querySelectorAll('.cart-item').forEach(el => el.remove());
+      cartCountText.textContent = cart.length.toString();
+
+      if (cart.length === 0) {
+        cartEmpty.style.display = 'block';
+      } else {
+        cartEmpty.style.display = 'none';
+        cart.forEach((item, idx) => {
+          const div = document.createElement('div');
+          div.className = 'cart-item';
+          div.innerHTML = `
+            <div style="font-weight: 700">${item.name}</div>
+            <div style="display: flex; align-items: center; gap: 12px">
+              <span style="font-family: ui-monospace, monospace; color: #C8102E; font-weight: 700">${item.rate} zł/doba</span>
+              <button class="btn-remove" data-id="${item.id}" style="background: none; border: none; color: #8a8a90; cursor: pointer; padding: 4px; font-weight: bold; font-size: 14px">✕</button>
+            </div>
+          `;
+          cartItemsList.appendChild(div);
+        });
+
+        // Attach remove handlers
+        cartItemsList.querySelectorAll('.btn-remove').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            const id = (e.target as HTMLElement).getAttribute('data-id');
+            if (id) removeFromCart(id);
+          });
+        });
+      }
+
+      updateCalculations();
+    }
+
+    function addToCart(id: string) {
+      const card = document.querySelector(`.vehicle-card[data-id="${id}"]`);
+      if (!card) return;
+
+      const name = card.getAttribute('data-name') || '';
+      const rate = parseInt(card.getAttribute('data-rate') || '0');
+
+      // Check if already in cart
+      if (cart.some(item => item.id === id)) return;
+
+      cart.push({ id, name, rate });
+
+      // Update button state
+      const btn = card.querySelector('.btn-add');
+      if (btn) {
+        btn.classList.add('selected');
+        btn.innerHTML = `
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg> Dodano`;
+      }
+
+      renderCart();
+    }
+
+    function removeFromCart(id: string) {
+      const idx = cart.findIndex(item => item.id === id);
+      if (idx > -1) {
+        cart.splice(idx, 1);
+      }
+
+      // Reset button state
+      const card = document.querySelector(`.vehicle-card[data-id="${id}"]`);
+      if (card) {
+        const btn = card.querySelector('.btn-add');
+        if (btn) {
+          btn.classList.remove('selected');
+          btn.innerHTML = `
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg> Dodaj do zapytania`;
+        }
+      }
+
+      renderCart();
+    }
+
+    addButtons.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget as HTMLButtonElement;
+        const id = target.getAttribute('data-id');
+        if (id) {
+          if (target.classList.contains('selected')) {
+            // Already added, do nothing (or remove)
+            removeFromCart(id);
+          } else {
+            addToCart(id);
+          }
+        }
+      });
+    });
+
+    // 4. SUBMIT FORM
+    bookingForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      if (cart.length === 0) {
+        alert('Dodaj przynajmniej jeden pojazd do zapytania.');
+        return;
+      }
+      if (!startDateInput.value || !endDateInput.value) {
+        alert('Proszę wybrać daty wynajmu.');
+        return;
+      }
+
+      // Populate success view details
+      const refNumber = document.getElementById('ref-number');
+      const successVehicles = document.getElementById('success-vehicles');
+      const successDates = document.getElementById('success-dates');
+
+      if (refNumber) {
+        const randomRef = Math.floor(10000 + Math.random() * 90000);
+        refNumber.textContent = `#MATEO-${randomRef}`;
+      }
+
+      if (successVehicles) {
+        successVehicles.textContent = cart.map(item => item.name).join(', ');
+      }
+
+      if (successDates) {
+        const days = calculateDays();
+        successDates.textContent = `${startDateInput.value} do ${endDateInput.value} (${days} dób)`;
+      }
+
+      // Switch screens
+      if (mainView && successView) {
+        mainView.style.display = 'none';
+        successView.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+  </script>
+</Layout>
