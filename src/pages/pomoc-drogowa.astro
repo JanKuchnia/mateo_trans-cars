@@ -1,47 +1,474 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+
+const scopes = [
+  { title: "Auta osobowe", description: "Holowanie po awarii, stłuczce lub przy problemach z rozruchem. Transport na bezpieczny parking, do wybranego mechanika lub na Twój adres.", icon: "M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" },
+  { title: "Auta dostawcze / busy", description: "Transport busów, pojazdów dostawczych i kontenerów. Posiadamy lawety dostosowane gabarytowo i tonażowo do cięższych ładunków.", icon: "M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" },
+  { title: "Drobne naprawy na drodze", description: "Awaryjne odpalanie z kabli (12V/24V), pomoc przy wymianie koła, dowóz paliwa przy nagłej usterce na trasie.", icon: "M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" },
+  { title: "Wyciąganie z rowu i błota", description: "Pomoc w trudnych sytuacjach zimowych i terenowych. Silna wyciągarka elektryczna pozwala bezpiecznie postawić auto z powrotem na jezdni.", icon: "M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" }
+];
+
+const faqs = [
+  { q: "Jakie informacje przygotować przed zadzwonieniem?", a: "Przygotuj: dokładną lokalizację (GPS lub najbliższe charakterystyczne punkty), markę i model pojazdu, informację czy koła kręcą się swobodnie (zablokowana skrzynia biegów/hamulec ręczny wymaga specjalnego podejścia) oraz adres docelowy holowania." },
+  { q: "Jak szybko przyjeżdżacie na miejsce zdarzenia?", a: "W rejonie Myślenic i najbliższych okolic dojeżdżamy zazwyczaj w ciągu 15-30 minut od zgłoszenia telefonicznego. W przypadku autostrady S7 (Zakopianki) czas ten zależy od natężenia ruchu drogowego." },
+  { q: "Czy mogę rozliczyć koszty holowania bezgotówkowo?", a: "Tak, jeśli posiadasz odpowiednie ubezpieczenie Assistance lub jesteś poszkodowanym w wypadku drogowym (koszt pokrywany z OC sprawcy). Współpracujemy z ubezpieczalniami i pomagamy w formalnościach." },
+  { q: "Czy pomoc drogowa działa w nocy i w święta?", a: "Tak, nasze pogotowie drogowe działa całodobowo (24/7), 365 dni w roku. Odbieramy telefony również w niedziele, święta oraz w godzinach nocnych." }
+];
 ---
 
 <Layout
   title="Pomoc drogowa Myślenice - MATEO TRANS & CARS"
   description="Pomoc drogowa Myślenice i okolice. Holowanie i transport aut osobowych oraz dostawczych. Jeden telefon i ruszamy."
 >
+  <!-- Custom Styles for Pomoc Drogowa page -->
+  <style>
+    .scope-card {
+      background: #fff;
+      border: 1px solid #e6e4e0;
+      border-radius: 6px;
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      will-change: transform, border-color, box-shadow;
+    }
+    .scope-card:hover {
+      transform: translateY(-4px) !important;
+      border-color: #C8102E !important;
+      box-shadow: 0 12px 32px rgba(20, 20, 22, 0.08) !important;
+    }
+
+    /* Calculator Styles */
+    .calc-container {
+      background: #fff;
+      border: 1px solid #e6e4e0;
+      border-radius: 6px;
+      padding: 36px;
+      box-shadow: 0 4px 20px rgba(20,20,22,0.02);
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 48px;
+    }
+    @media (max-width: 900px) {
+      .calc-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
+    .input-group {
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .input-group label {
+      font-size: 13.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #8a8a90;
+    }
+    .select-styled {
+      padding: 14px;
+      border-radius: 4px;
+      border: 1px solid #e0dedb;
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      background: #f6f5f3;
+      transition: border-color 0.2s ease;
+    }
+    .select-styled:focus {
+      border-color: #C8102E;
+    }
+    .range-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .range-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .range-val {
+      font-family: ui-monospace, Menlo, monospace;
+      font-weight: 700;
+      color: #C8102E;
+      background: #fdf2f4;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .range-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #e6e4e0;
+      outline: none;
+    }
+    .range-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #C8102E;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .range-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+    .result-pane {
+      background: #141416;
+      color: #fff;
+      border-radius: 6px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      min-height: 280px;
+    }
+    .result-pane::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(200,16,46,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Timeline Process Styles */
+    .timeline-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-top: 2px solid #141416;
+      margin-top: 40px;
+    }
+    .timeline-item {
+      padding: 28px 24px 30px 0;
+      border-right: 1px solid #e6e4e0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .timeline-item:last-child {
+      border-right: none;
+      padding-right: 0;
+      padding-left: 24px;
+    }
+    .timeline-item:not(:first-child):not(:last-child) {
+      padding-left: 24px;
+    }
+    @media (max-width: 900px) {
+      .timeline-steps {
+        grid-template-columns: 1fr;
+        border-top: none;
+        margin-top: 20px;
+      }
+      .timeline-item {
+        padding: 24px 0 !important;
+        border-right: none !important;
+        border-bottom: 1px solid #e6e4e0;
+      }
+      .timeline-item:last-child {
+        border-bottom: none;
+      }
+    }
+  </style>
+
+  <!-- ============ HERO ============ -->
   <section data-screen-label="Hero usługi" style="background:#141416;color:#fff;padding-top:88px">
     <div class="service-hero-grid"
       style="max-width:1200px;margin:0 auto;padding:88px 32px;display:grid;grid-template-columns:1.05fr 0.95fr;gap:56px;align-items:center">
       <div style="display:flex;flex-direction:column;gap:22px">
-        <span style="font-size:12.5px;letter-spacing:0.24em;text-transform:uppercase;color:#C8102E;font-weight:700">04 — W trasie</span>
-        <h1 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:44px;line-height:1.12;font-weight:800;margin:0;letter-spacing:-0.01em;text-wrap:balance">
-          Pomoc drogowa</h1>
-        <p style="font-size:17px;line-height:1.65;color:#b9b9c0;margin:0;max-width:520px;text-wrap:pretty">
-          Holowanie i transport aut osobowych oraz dostawczych — Myślenice i okolice. Jeden telefon i ruszamy, także
-          poza standardowymi godzinami.</p>
-        <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:34px;height:2px;background:#C8102E"></span>
+          <span style="font-size:12.5px;letter-spacing:0.24em;text-transform:uppercase;color:#C8102E;font-weight:700">04 — W trasie 24/7</span>
+        </div>
+        <h1 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:48px;line-height:1.1;font-weight:800;margin:0;letter-spacing:-0.01em;text-wrap:balance">
+          Całodobowa pomoc drogowa Myślenice</h1>
+        <p style="font-size:17.5px;line-height:1.65;color:#b9b9c0;margin:0;max-width:520px;text-wrap:pretty">
+          Holowanie i transport aut osobowych, dostawczych oraz busów na terenie Myślenic i całej okolicy. Szybki dojazd, bezpieczny załadunek i uczciwe stawki. Jeden telefon i ruszamy na pomoc.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px">
           <a href="tel:+48791072708"
-            style="display:inline-flex;align-items:center;gap:10px;background:#C8102E;color:#fff;padding:16px 30px;border-radius:4px;font-weight:700;font-size:15.5px">Zadzwoń: 791 072 708</a>
+            style="display:inline-flex;align-items:center;gap:10px;background:#C8102E;color:#fff;padding:16px 30px;border-radius:4px;font-weight:700;font-size:15.5px">Zadzwoń teraz: 791 072 708</a>
+          <a href="#calc-section"
+            style="display:inline-flex;align-items:center;gap:10px;border:1px solid #3a3a40;color:#fff;padding:16px 30px;border-radius:4px;font-weight:600;font-size:15.5px">Oblicz koszt holowania</a>
         </div>
       </div>
-      <div style="min-height:340px;border-radius:6px;overflow:hidden">
+      <div style="min-height:360px;border-radius:6px;overflow:hidden;border:1px solid #2e2e34">
         <img src="https://images.pexels.com/photos/12982224/pexels-photo-12982224.jpeg?auto=compress&cs=tinysrgb&w=1200"
           alt="Holowanie i pomoc drogowa" style="width:100%;height:100%;object-fit:cover;display:block">
       </div>
     </div>
   </section>
 
-  <section style="padding:80px 32px">
-    <div style="max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:28px">
-      <h2 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:28px;font-weight:800;margin:0">Zakres pomocy drogowej</h2>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px">
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <span style="font-weight:800;color:#C8102E">Auta osobowe</span>
-          <p style="margin:0;font-size:14.5px;line-height:1.6;color:#5a5a60">Holowanie po awarii, stłuczce lub przy problemach z rozruchem — na miejsce naprawy lub docelowy adres.</p>
+  <!-- ============ ZAKRES POMOCY (CARDS) ============ -->
+  <section style="padding:92px 32px;background:#f6f5f3">
+    <div style="max-width:1200px;margin:0 auto">
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:44px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:34px;height:2px;background:#C8102E"></span>
+          <span style="font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#8a8a90;font-weight:700">Zakres usług</span>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <span style="font-weight:800;color:#C8102E">Auta dostawcze</span>
-          <p style="margin:0;font-size:14.5px;line-height:1.6;color:#5a5a60">Transport busów i pojazdów dostawczych lawetą przystosowaną do większych gabarytów.</p>
-        </div>
+        <h2 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:34px;font-weight:800;margin:0;letter-spacing:-0.01em">
+          Co obejmuje nasza pomoc drogowa?
+        </h2>
+        <p style="margin:6px 0 0;font-size:14.5px;line-height:1.6;color:#5a5a60;max-width:640px">
+          Oferujemy kompleksowe wsparcie w sytuacjach awaryjnych oraz przy planowanym transporcie maszyn i aut z placu.
+        </p>
       </div>
-      <p style="margin:0;font-size:15px;line-height:1.65;color:#5a5a60">Obsługujemy Myślenice i okolicę — zadzwoń, podaj lokalizację, a od razu ruszamy.</p>
+
+      <!-- Scope Cards Grid -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px">
+        {scopes.map((item, index) => (
+          <div class="scope-card reveal-on-scroll">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <span style="font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#C8102E;font-weight:700">0{index+1}</span>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8102E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d={item.icon}></path>
+              </svg>
+            </div>
+            <h3 style="font-size:20px;font-weight:800;color:#141416;margin:0">{item.title}</h3>
+            <p style="font-size:14.5px;line-height:1.6;color:#5a5a60;margin:0;text-wrap:pretty">{item.description}</p>
+          </div>
+        ))}
+      </div>
     </div>
   </section>
+
+  <!-- ============ INTERAKTYWNA WYCENA (TOW CALC) ============ -->
+  <section id="calc-section" style="padding:92px 32px">
+    <div style="max-width:1200px;margin:0 auto">
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:44px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:34px;height:2px;background:#C8102E"></span>
+          <span style="font-size:12.5px;letter-spacing:0.24em;text-transform:uppercase;color:#8a8a90;font-weight:700">Kalkulator Opłat</span>
+        </div>
+        <h2 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:34px;font-weight:800;margin:0;letter-spacing:-0.01em">
+          Oblicz szacowany koszt holowania
+        </h2>
+        <p style="font-size:15px;line-height:1.6;color:#5a5a60;margin:6px 0 0;max-width:640px">
+          Wpisz przewidywany dystans w kilometrach, by wyliczyć stawkę orientacyjną. Ostateczna kwota zależy od trudności załadunku i pory dnia.
+        </p>
+      </div>
+
+      <div class="calc-container">
+        <div class="calc-grid">
+          <!-- Inputs -->
+          <div>
+            <!-- Vehicle Selection -->
+            <div class="input-group">
+              <label for="tow-vehicle-type">Wielkość / Typ pojazdu</label>
+              <select id="tow-vehicle-type" class="select-styled">
+                <option value="200">Auto osobowe (np. hatchback, sedan, kombi) — baza 200 zł</option>
+                <option value="350">Duże auto / SUV / Bus dostawczy — baza 350 zł</option>
+              </select>
+            </div>
+
+            <!-- Distance -->
+            <div class="input-group">
+              <div class="range-header">
+                <label for="tow-distance">Dystans transportu (km)</label>
+                <span id="dist-val" class="range-val">20 km</span>
+              </div>
+              <div class="range-wrapper">
+                <input type="range" id="tow-distance" min="1" max="150" value="20" class="range-slider" />
+              </div>
+            </div>
+
+            <!-- Warning notice -->
+            <div style="background:#fdf2f4;border-left:3px solid #C8102E;padding:16px;border-radius:0 4px 4px 0;font-size:13.5px;line-height:1.5;color:#5a5a60">
+              <span style="font-weight:700;color:#C8102E">Ważne czynniki cenotwórcze:</span>
+              <p style="margin:4px 0 0;font-size:13px">
+                Szacunek obejmuje standardowe załadowanie sprawnego toczenia. Zablokowane koła, urwana oś, praca w godzinach nocnych (22:00 - 6:00) lub w niedziele mogą podwyższyć koszt o ok. 20-50%.
+              </p>
+            </div>
+          </div>
+
+          <!-- Result Pane -->
+          <div class="result-pane">
+            <div style="display:flex;flex-direction:column;gap:12px;z-index:2;align-items:center">
+              <span style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a92;font-weight:700">Szacowany koszt usługi</span>
+              <div id="tow-price" style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:38px;font-weight:800;color:#fff;margin:12px 0;letter-spacing:-0.02em">
+                280 zł
+              </div>
+              <div id="tow-details" style="font-size:14px;color:#a0a0a8;margin-bottom:24px">
+                Opłata początkowa: 200 zł + holowanie 80 zł (4 zł/km)
+              </div>
+              <a href="tel:+48791072708"
+                style="display:inline-flex;align-items:center;gap:10px;background:#C8102E;color:#fff;padding:15px 28px;border-radius:4px;font-weight:700;font-size:15px;width:100%;justify-content:center;box-sizing:border-box">
+                Zadzwoń: 791 072 708
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROCES POMOCY DROGOWEJ (TIMELINE) ============ -->
+  <section style="background:#fff;border-top:1px solid #e6e4e0;border-bottom:1px solid #e6e4e0">
+    <div style="max-width:1200px;margin:0 auto;padding:92px 32px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:44px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="width:34px;height:2px;background:#C8102E"></span>
+            <span style="font-size:12.5px;letter-spacing:0.24em;text-transform:uppercase;color:#8a8a90;font-weight:600">Szybki Dojazd</span>
+          </div>
+          <h2 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:34px;font-weight:800;margin:0;letter-spacing:-0.01em">
+            Jak działamy w nagłych sytuacjach
+          </h2>
+        </div>
+        <span style="font-size:14px;color:#7a7a80;max-width:320px">Jesteśmy w gotowości 24 godziny na dobę, 7 dni w tygodniu.</span>
+      </div>
+
+      <div class="timeline-steps">
+        <div class="timeline-item reveal-on-scroll">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:800;font-size:15px;color:#C8102E">01</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+          </div>
+          <h3 style="font-size:18px;font-weight:700;margin:0">Telefon zgłoszeniowy</h3>
+          <p style="font-size:14px;line-height:1.6;color:#5a5a60;margin:0">
+            Dzwonisz pod numer 791 072 708. Nasz dyspozytor odbiera zgłoszenie o każdej porze dnia i nocy.
+          </p>
+        </div>
+        <div class="timeline-item reveal-on-scroll">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:800;font-size:15px;color:#C8102E">02</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </div>
+          <h3 style="font-size:18px;font-weight:700;margin:0">Lokalizacja zdarzenia</h3>
+          <p style="font-size:14px;line-height:1.6;color:#5a5a60;margin:0">
+            Podajesz miejsce awarii (lub wysyłasz nam pineskę GPS przez telefon). Określasz typ auta i zakres uszkodzeń.
+          </p>
+        </div>
+        <div class="timeline-item reveal-on-scroll">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:800;font-size:15px;color:#C8102E">03</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle>
+            </svg>
+          </div>
+          <h3 style="font-size:18px;font-weight:700;margin:0">Błyskawiczny wyjazd</h3>
+          <p style="font-size:14px;line-height:1.6;color:#5a5a60;margin:0">
+            Laweta wyrusza z Myślenic natychmiast. Informujemy Cię telefonicznie o dokładnym czasie przybycia na miejsce.
+          </p>
+        </div>
+        <div class="timeline-item reveal-on-scroll">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:800;font-size:15px;color:#C8102E">04</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <h3 style="font-size:18px;font-weight:700;margin:0">Załadunek & Transport</h3>
+          <p style="font-size:14px;line-height:1.6;color:#5a5a60;margin:0">
+            Bezpiecznie wprowadzamy auto na platformę i transportujemy je do mechanika, na nasz strzeżony plac lub pod Twój dom.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ACCORDION ============ -->
+  <section style="padding:92px 32px">
+    <div style="max-width:900px;margin:0 auto">
+      <h2 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:34px;font-weight:800;margin:0 0 40px;letter-spacing:-0.01em;text-align:center">
+        Najczęstsze pytania o pomoc drogową
+      </h2>
+      <div style="border-top:1px solid #e6e4e0">
+        {faqs.map((item, i) => (
+          <div class="faq-item" style="border-bottom:1px solid #e6e4e0">
+            <button class="faq-toggle"
+              style="width:100%;background:none;border:none;padding:24px 4px;display:flex;align-items:center;justify-content:space-between;gap:20px;cursor:pointer;text-align:left;font-family:inherit">
+              <span style="font-size:18px;font-weight:700;color:#141416">{item.q}</span>
+              <svg class={`faq-icon${i === 0 ? ' faq-icon-active' : ''}`} width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke="#8a8a90" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+                style="flex-shrink:0">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <line x1="12" y1="5" x2="12" y2="19" class="plus-vertical-line"></line>
+              </svg>
+            </button>
+            <div class={`faq-answer-wrapper${i === 0 ? ' open' : ''}`}>
+              <div class="faq-answer-content">
+                <p style="margin:0;padding:0 4px 26px;font-size:15.5px;line-height:1.65;color:#5a5a60;max-width:680px;text-wrap:pretty">
+                  {item.a}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCRIPTS ============ -->
+  <script>
+    // RENTAL CALCULATOR LOGIC
+    const vehicleTypeSelect = document.getElementById('tow-vehicle-type') as HTMLSelectElement;
+    const distanceSlider = document.getElementById('tow-distance') as HTMLInputElement;
+    const distVal = document.getElementById('dist-val') as HTMLElement;
+    const totalPriceText = document.getElementById('tow-price') as HTMLElement;
+    const rateDetailsText = document.getElementById('tow-details') as HTMLElement;
+
+    function calculateTowCost() {
+      const baseFee = parseInt(vehicleTypeSelect.value);
+      const distance = parseInt(distanceSlider.value);
+      const perKmRate = 4; // 4 PLN per km
+
+      const variableFee = distance * perKmRate;
+      const totalCost = baseFee + variableFee;
+
+      // Update values
+      distVal.textContent = `${distance} km`;
+      totalPriceText.textContent = `${totalCost.toLocaleString('pl-PL')} zł`;
+      rateDetailsText.textContent = `Opłata początkowa: ${baseFee} zł + holowanie: ${variableFee} zł (${perKmRate} zł/km)`;
+    }
+
+    vehicleTypeSelect.addEventListener('change', calculateTowCost);
+    distanceSlider.addEventListener('input', calculateTowCost);
+
+    // Run once initially
+    calculateTowCost();
+
+    // FAQ ACCORDION LOGIC
+    document.querySelectorAll('.faq-item').forEach((item) => {
+      const button = item.querySelector('.faq-toggle');
+      const wrapper = item.querySelector('.faq-answer-wrapper');
+      const icon = item.querySelector('.faq-icon');
+
+      button?.addEventListener('click', () => {
+        const isOpen = wrapper?.classList.contains('open');
+
+        // Close all other accordions
+        document.querySelectorAll('.faq-answer-wrapper.open').forEach((w) => w.classList.remove('open'));
+        document.querySelectorAll('.faq-icon.faq-icon-active').forEach((i) => i.classList.remove('faq-icon-active'));
+
+        if (!isOpen) {
+          wrapper?.classList.add('open');
+          icon?.classList.add('faq-icon-active');
+        }
+      });
+    });
+  </script>
 </Layout>

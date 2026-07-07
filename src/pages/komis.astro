@@ -1,89 +1,617 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+
+const cars = [
+  { name: "Volkswagen Passat B8", type: "osobowe", details: "2018 · 2.0 TDI · 178 tys. km", price: "od 54 900 zł", image: "https://images.pexels.com/photos/1149137/pexels-photo-1149137.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { name: "Ford Transit Custom", type: "dostawcze", details: "2019 · 2.0 TDCi · furgon", price: "od 62 500 zł", image: "https://images.pexels.com/photos/2833037/pexels-photo-2833037.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { name: "Skoda Octavia III", type: "osobowe", details: "2017 · 1.6 TDI · kombi", price: "od 41 900 zł", image: "https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { name: "Renault Master L3H2", type: "dostawcze", details: "2020 · 2.3 dCi · 145 KM · 190 tys. km", price: "od 74 900 zł", image: "https://images.pexels.com/photos/15602197/pexels-photo-15602197.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { name: "BMW Serii 3 F30", type: "osobowe", details: "2016 · 2.0 TwinPower · 165 tys. km", price: "od 68 000 zł", image: "https://images.pexels.com/photos/27138933/pexels-photo-27138933.jpeg?auto=compress&cs=tinysrgb&w=800" }
+];
+
+const faqs = [
+  { q: "Jakie dokumenty są potrzebne przy sprzedaży auta w skupie?", a: "Do przeprowadzenia transakcji niezbędne są: dowód osobisty właściciela (lub właścicieli), dowód rejestracyjny pojazdu, karta pojazdu (jeśli była wydana) oraz ważna polisa ubezpieczenia OC." },
+  { q: "Czy skupujecie auta uszkodzone lub bez ważnego badania technicznego?", a: "Tak, odkupujemy pojazdy w każdym stanie — sprawne, do poprawek lakierniczych, uszkodzone mechanicznie oraz bez ważnego przeglądu. W razie potrzeby odbieramy auto własną lawetą z terenu Myślenic i okolic." },
+  { q: "Jak szybko wypłacacie pieniądze za samochód?", a: "Transakcję finalizujemy natychmiast na miejscu. Po podpisaniu umowy kupna-sprzedaży wypłacamy gotówkę bezpośrednio do rąk klienta lub zlecamy przelew błyskawiczny na wskazany rachunek bankowy." },
+  { q: "Czy pomagacie w załatwieniu leasingu lub kredytu na auta z Waszego placu?", a: "Tak. Ściśle współpracujemy z czołowymi doradcami finansowymi oraz bankami. Pomagamy sprawnie przejść przez weryfikację kredytową lub leasingową oraz bezpłatnie przygotowujemy kompletną dokumentację do rejestracji." }
+];
 ---
 
 <Layout
   title="Komis samochodowy Myślenice - MATEO TRANS & CARS"
   description="Komis samochodowy w Myślenicach. Sprawdzone auta osobowe i dostawcze, skup, sprzedaż, pomoc w leasingu i rejestracji. Pełna oferta na Otomoto."
 >
+  <!-- Custom Styles for Komis page -->
+  <style>
+    .filter-tab {
+      background: #fff;
+      border: 1px solid #e6e4e0;
+      color: #5a5a60;
+      padding: 10px 24px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .filter-tab.active {
+      background: #C8102E;
+      color: #fff;
+      border-color: #C8102E;
+    }
+    .filter-tab:hover:not(.active) {
+      background: #f6f5f3;
+      border-color: #c0beba;
+      color: #141416;
+    }
+    .car-card {
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+      will-change: transform, opacity;
+    }
+    .car-card:hover {
+      transform: translateY(-5px);
+      border-color: #C8102E;
+      box-shadow: 0 12px 32px rgba(20,20,22,0.08);
+    }
+
+    /* Calculator Styles */
+    .calc-container {
+      background: #fff;
+      border: 1px solid #e6e4e0;
+      border-radius: 6px;
+      padding: 36px;
+      box-shadow: 0 4px 20px rgba(20,20,22,0.02);
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 48px;
+    }
+    @media (max-width: 900px) {
+      .calc-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
+    .input-group {
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .input-group label {
+      font-size: 13.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #8a8a90;
+    }
+    .select-styled {
+      padding: 14px;
+      border-radius: 4px;
+      border: 1px solid #e0dedb;
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      background: #f6f5f3;
+      transition: border-color 0.2s ease;
+    }
+    .select-styled:focus {
+      border-color: #C8102E;
+    }
+    .range-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .range-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .range-val {
+      font-family: ui-monospace, Menlo, monospace;
+      font-weight: 700;
+      color: #C8102E;
+      background: #fdf2f4;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .range-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #e6e4e0;
+      outline: none;
+    }
+    .range-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #C8102E;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .range-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+    .radio-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .radio-btn {
+      border: 1px solid #e0dedb;
+      border-radius: 4px;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14.5px;
+      background: #f6f5f3;
+      transition: all 0.2s ease;
+    }
+    .radio-btn.selected {
+      background: #C8102E;
+      color: #fff;
+      border-color: #C8102E;
+    }
+    .result-pane {
+      background: #141416;
+      color: #fff;
+      border-radius: 6px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      min-height: 280px;
+    }
+    .result-pane::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(200,16,46,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Timeline Process Styles */
+    .timeline-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-top: 2px solid #141416;
+      margin-top: 40px;
+    }
+    .timeline-item {
+      padding: 28px 24px 30px 0;
+      border-right: 1px solid #e6e4e0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .timeline-item:last-child {
+      border-right: none;
+      padding-right: 0;
+      padding-left: 24px;
+    }
+    .timeline-item:not(:first-child):not(:last-child) {
+      padding-left: 24px;
+    }
+    @media (max-width: 900px) {
+      .timeline-steps {
+        grid-template-columns: 1fr;
+        border-top: none;
+        margin-top: 20px;
+      }
+      .timeline-item {
+        padding: 24px 0 !important;
+        border-right: none !important;
+        border-bottom: 1px solid #e6e4e0;
+      }
+      .timeline-item:last-child {
+        border-bottom: none;
+      }
+    }
+  </style>
+
+  <!-- ============ HERO ============ -->
   <section data-screen-label="Hero usługi" style="background:#141416;color:#fff;padding-top:88px">
     <div class="service-hero-grid"
       style="max-width:1200px;margin:0 auto;padding:88px 32px;display:grid;grid-template-columns:1.05fr 0.95fr;gap:56px;align-items:center">
       <div style="display:flex;flex-direction:column;gap:22px">
-        <span style="font-size:12.5px;letter-spacing:0.24em;text-transform:uppercase;color:#C8102E;font-weight:700">01 — Sprzedaż</span>
-        <h1 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:44px;line-height:1.12;font-weight:800;margin:0;letter-spacing:-0.01em;text-wrap:balance">
-          Komis samochodowy</h1>
-        <p style="font-size:17px;line-height:1.65;color:#b9b9c0;margin:0;max-width:520px;text-wrap:pretty">
-          Sprawdzone auta osobowe i dostawcze — kupione i wystawione uczciwie, bez ukrywania wad. Pomagamy w leasingu,
-          kredycie i rejestracji, żebyś nie musiał wszystkiego załatwiać sam.</p>
-        <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:34px;height:2px;background:#C8102E"></span>
+          <span style="font-size:12.5px;letter-spacing:0.24em;text-transform:uppercase;color:#9a9aa2;font-weight:700">01 — Sprzedaż & Skup</span>
+        </div>
+        <h1 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:48px;line-height:1.1;font-weight:800;margin:0;letter-spacing:-0.01em;text-wrap:balance">
+          Uczciwy komis samochodowy</h1>
+        <p style="font-size:17.5px;line-height:1.65;color:#b9b9c0;margin:0;max-width:520px;text-wrap:pretty">
+          Sprawdzone auta osobowe i dostawcze. Kupujemy i sprzedajemy bez naciągania i ukrywania wad. Pomagamy w leasingu,
+          kredycie i rejestracji, żeby cała transakcja była dla Ciebie czystą przyjemnością.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px">
           <a href="https://mateocars.otomoto.pl/inventory" target="_blank" rel="noopener"
-            style="display:inline-flex;align-items:center;gap:10px;background:#C8102E;color:#fff;padding:16px 30px;border-radius:4px;font-weight:700;font-size:15.5px">Zobacz ofertę na Otomoto</a>
-          <a href="tel:+48791072708"
-            style="display:inline-flex;align-items:center;gap:10px;border:1px solid #3a3a40;color:#fff;padding:16px 30px;border-radius:4px;font-weight:600;font-size:15.5px">791 072 708</a>
+            style="display:inline-flex;align-items:center;gap:10px;background:#C8102E;color:#fff;padding:16px 30px;border-radius:4px;font-weight:700;font-size:15.5px">Zobacz ofertę na Otomoto
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
+          </a>
+          <a href="#skup-calc"
+            style="display:inline-flex;align-items:center;gap:10px;border:1px solid #3a3a40;color:#fff;padding:16px 30px;border-radius:4px;font-weight:600;font-size:15.5px">Wyceń swoje auto</a>
         </div>
       </div>
-      <div style="min-height:340px;border-radius:6px;overflow:hidden">
+      <div style="min-height:360px;border-radius:6px;overflow:hidden;border:1px solid #2e2e34">
         <img src="https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg?auto=compress&cs=tinysrgb&w=1200"
           alt="Samochody na placu komisu" style="width:100%;height:100%;object-fit:cover;display:block">
       </div>
     </div>
   </section>
 
-  <section style="padding:80px 32px;background:#f4f4f5">
-    <div style="max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:32px">
-      <h2 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:28px;font-weight:800;margin:0">Przykłady z oferty</h2>
-      <p style="margin:-16px 0 0;font-size:14.5px;line-height:1.6;color:#5a5a60">Oferta zmienia się na bieżąco — pełną i aktualną listę znajdziesz zawsze na Otomoto.</p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px">
-        <div style="background:#fff;border-radius:6px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08)">
-          <img src="https://images.pexels.com/photos/1149137/pexels-photo-1149137.jpeg?auto=compress&cs=tinysrgb&w=800"
-            alt="Volkswagen Passat" style="width:100%;height:190px;object-fit:cover;display:block">
-          <div style="padding:20px;display:flex;flex-direction:column;gap:6px">
-            <span style="font-weight:800;font-size:17px">Volkswagen Passat B8</span>
-            <span style="font-size:13.5px;color:#5a5a60">2018 · 2.0 TDI · 178 tys. km</span>
-            <span style="font-weight:700;color:#C8102E;margin-top:4px">od 54 900 zł</span>
+  <!-- ============ PRZYKŁADOWE MODELE (Z FILTREM) ============ -->
+  <section style="padding:92px 32px;background:#f6f5f3">
+    <div style="max-width:1200px;margin:0 auto">
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:44px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:34px;height:2px;background:#C8102E"></span>
+          <span style="font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#8a8a90;font-weight:700">Aktualne Pojazdy</span>
+        </div>
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap">
+          <h2 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:34px;font-weight:800;margin:0;letter-spacing:-0.01em">
+            Przykłady z oferty na placu
+          </h2>
+          <!-- Filter Tabs -->
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="filter-tab active" data-filter="all">Wszystkie</button>
+            <button class="filter-tab" data-filter="osobowe">Osobowe</button>
+            <button class="filter-tab" data-filter="dostawcze">Dostawcze</button>
           </div>
         </div>
-        <div style="background:#fff;border-radius:6px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08)">
-          <img src="https://images.pexels.com/photos/2833037/pexels-photo-2833037.jpeg?auto=compress&cs=tinysrgb&w=800"
-            alt="Ford Transit" style="width:100%;height:190px;object-fit:cover;display:block">
-          <div style="padding:20px;display:flex;flex-direction:column;gap:6px">
-            <span style="font-weight:800;font-size:17px">Ford Transit Custom</span>
-            <span style="font-size:13.5px;color:#5a5a60">2019 · 2.0 TDCi · furgon</span>
-            <span style="font-weight:700;color:#C8102E;margin-top:4px">od 62 500 zł</span>
-          </div>
+        <p style="margin:6px 0 0;font-size:14.5px;line-height:1.6;color:#5a5a60">
+          Nasza oferta stale rotuje. Kliknij zakładkę, by filtrować kategorie aut. Pełną i aktualną listę znajdziesz zawsze w profilu Otomoto.
+        </p>
+      </div>
+
+      <!-- Cars Grid -->
+      <div class="cars-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px">
+        {cars.map((car) => (
+          <a href="https://mateocars.otomoto.pl/inventory" target="_blank" rel="noopener" class="car-card reveal-on-scroll" data-type={car.type}
+            style="background:#fff;border:1px solid #e6e4e0;border-radius:6px;overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:190px;overflow:hidden">
+              <img src={car.image} alt={car.name} style="width:100%;height:100%;object-fit:cover;display:block" />
+            </div>
+            <div style="padding:22px;display:flex;flex-direction:column;gap:6px;flex-grow:1">
+              <span style="font-weight:800;font-size:17.5px;color:#141416">{car.name}</span>
+              <span style="font-size:13.5px;color:#7a7a80">{car.details}</span>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:16px;border-top:1px solid #f2f0ec">
+                <span style="font-weight:800;color:#C8102E;font-size:16.5px">{car.price}</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#8a8a90">Szczegóły →</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INTERAKTYWNA WYCENA (CALCULATOR) ============ -->
+  <section id="skup-calc" style="padding:92px 32px">
+    <div style="max-width:1200px;margin:0 auto">
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:44px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:34px;height:2px;background:#C8102E"></span>
+          <span style="font-size:12.5px;letter-spacing:0.24em;text-transform:uppercase;color:#8a8a90;font-weight:700">Wycena Auta</span>
         </div>
-        <div style="background:#fff;border-radius:6px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08)">
-          <img src="https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=800"
-            alt="Skoda Octavia" style="width:100%;height:190px;object-fit:cover;display:block">
-          <div style="padding:20px;display:flex;flex-direction:column;gap:6px">
-            <span style="font-weight:800;font-size:17px">Skoda Octavia III</span>
-            <span style="font-size:13.5px;color:#5a5a60">2017 · 1.6 TDI · kombi</span>
-            <span style="font-weight:700;color:#C8102E;margin-top:4px">od 41 900 zł</span>
+        <h2 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:34px;font-weight:800;margin:0;letter-spacing:-0.01em">
+          Oblicz szacunkową wartość odkupu
+        </h2>
+        <p style="font-size:15px;line-height:1.6;color:#5a5a60;margin:6px 0 0;max-width:640px">
+          Chcesz sprzedać swoje auto? Skorzystaj z naszego orientacyjnego kalkulatora wyceny. Ostateczną i wiążącą ofertę przedstawimy po oględzinach na placu.
+        </p>
+      </div>
+
+      <div class="calc-container">
+        <div class="calc-grid">
+          <!-- Inputs Column -->
+          <div>
+            <!-- Category -->
+            <div class="input-group">
+              <label for="car-category">Kategoria pojazdu</label>
+              <select id="car-category" class="select-styled">
+                <option value="miejski">Popularne miejskie (np. Skoda Fabia, Toyota Yaris)</option>
+                <option value="sedan" selected>Sedan / Kombi / Hatchback klasy średniej (np. VW Passat, Opel Astra)</option>
+                <option value="suv">SUV / Crossover (np. Ford Kuga, Mitsubishi Outlander)</option>
+                <option value="premium">Segment Premium (np. BMW Serii 3, Audi A4)</option>
+                <option value="dostawczy">Auto dostawcze / Bus (np. Ford Transit, Iveco Daily)</option>
+              </select>
+            </div>
+
+            <!-- Production Year -->
+            <div class="input-group">
+              <div class="range-header">
+                <label for="car-year">Rok produkcji</label>
+                <span id="year-val" class="range-val">2018</span>
+              </div>
+              <div class="range-wrapper">
+                <input type="range" id="car-year" min="2010" max="2026" value="2018" class="range-slider" />
+              </div>
+            </div>
+
+            <!-- Mileage -->
+            <div class="input-group">
+              <div class="range-header">
+                <label for="car-mileage">Przebieg (km)</label>
+                <span id="mileage-val" class="range-val">150 000 km</span>
+              </div>
+              <div class="range-wrapper">
+                <input type="range" id="car-mileage" min="5000" max="350000" step="5000" value="150000" class="range-slider" />
+              </div>
+            </div>
+
+            <!-- Condition -->
+            <div class="input-group">
+              <label>Stan techniczny i wizualny</label>
+              <div class="radio-grid" id="condition-grid">
+                <div class="radio-btn" data-value="bardzo-dobry">Bardzo dobry</div>
+                <div class="radio-btn selected" data-value="dobry">Dobry (normalne ślady)</div>
+                <div class="radio-btn" data-value="do-poprawek">Do poprawek</div>
+                <div class="radio-btn" data-value="uszkodzony">Uszkodzony</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Result Pane Column -->
+          <div class="result-pane">
+            <div style="display:flex;flex-direction:column;gap:12px;z-index:2;align-items:center">
+              <span style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#8a8a92;font-weight:700">Szacunkowa Wartość</span>
+              <div id="price-range" style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:36px;font-weight:800;color:#fff;margin:12px 0;letter-spacing:-0.02em">
+                42 000 — 48 000 zł
+              </div>
+              <p style="font-size:14.5px;color:#a0a0a8;line-height:1.6;margin:0 0 24px;max-width:280px">
+                Wycena opiera się na parametrach rynkowych. Zapraszamy na darmową wycenę na placu!
+              </p>
+              <a href="tel:+48791072708"
+                style="display:inline-flex;align-items:center;gap:10px;background:#C8102E;color:#fff;padding:15px 28px;border-radius:4px;font-weight:700;font-size:15px;width:100%;justify-content:center;box-sizing:border-box">
+                Zadzwoń po wycenę: 791 072 708
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section style="padding:80px 32px">
-    <div style="max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:28px">
-      <h2 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:28px;font-weight:800;margin:0">Jak to działa</h2>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+  <!-- ============ PROCES (TIMELINE) ============ -->
+  <section style="background:#fff;border-top:1px solid #e6e4e0;border-bottom:1px solid #e6e4e0">
+    <div style="max-width:1200px;margin:0 auto;padding:92px 32px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:44px">
         <div style="display:flex;flex-direction:column;gap:8px">
-          <span style="font-weight:800;color:#C8102E">Skup</span>
-          <p style="margin:0;font-size:14.5px;line-height:1.6;color:#5a5a60">Wyceniamy Twoje auto osobowe lub dostawcze i płacimy od ręki — bez zobowiązań.</p>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="width:34px;height:2px;background:#C8102E"></span>
+            <span style="font-size:12.5px;letter-spacing:0.24em;text-transform:uppercase;color:#8a8a90;font-weight:600">Jak działamy</span>
+          </div>
+          <h2 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:34px;font-weight:800;margin:0;letter-spacing:-0.01em">
+            Proces zakupu i sprzedaży auta
+          </h2>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <span style="font-weight:800;color:#C8102E">Sprzedaż</span>
-          <p style="margin:0;font-size:14.5px;line-height:1.6;color:#5a5a60">Pełna, aktualna oferta zawsze na Otomoto — zdjęcia, ceny i opis stanu technicznego.</p>
+        <span style="font-size:14px;color:#7a7a80;max-width:320px">Zapewniamy maksimum wygody i pełną transparentność dokumentów.</span>
+      </div>
+
+      <div class="timeline-steps">
+        <div class="timeline-item reveal-on-scroll">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:800;font-size:15px;color:#C8102E">01</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+          </div>
+          <h3 style="font-size:18px;font-weight:700;margin:0">Kontakt lub wizyta</h3>
+          <p style="font-size:14px;line-height:1.6;color:#5a5a60;margin:0">
+            Dzwonisz do nas pod numer 791 072 708, opisujesz auto do wyceny, bądź umawiasz się na oględziny konkretnego modelu z placu.
+          </p>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <span style="font-weight:800;color:#C8102E">Formalności</span>
-          <p style="margin:0;font-size:14.5px;line-height:1.6;color:#5a5a60">Prowadzimy przez leasing, kredyt i rejestrację — tłumaczymy każdy dokument przed podpisem.</p>
+        <div class="timeline-item reveal-on-scroll">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:800;font-size:15px;color:#C8102E">02</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+              <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"></path>
+            </svg>
+          </div>
+          <h3 style="font-size:18px;font-weight:700;margin:0">Oględziny i ocena</h3>
+          <p style="font-size:14px;line-height:1.6;color:#5a5a60;margin:0">
+            Wspólnie oglądamy auto. Zgadzamy się na wizytę na SKP czy podpięcie komputera diagnostycznego. Pokazujemy historię pojazdu.
+          </p>
+        </div>
+        <div class="timeline-item reveal-on-scroll">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:800;font-size:15px;color:#C8102E">03</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path>
+            </svg>
+          </div>
+          <h3 style="font-size:18px;font-weight:700;margin:0">Leasing / Umowa</h3>
+          <p style="font-size:14px;line-height:1.6;color:#5a5a60;margin:0">
+            Sporządzamy umowę kupna-sprzedaży lub fakturę. Pomagamy załatwić finansowanie i ubezpieczenie w sprawdzonych instytucjach.
+          </p>
+        </div>
+        <div class="timeline-item reveal-on-scroll">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:800;font-size:15px;color:#C8102E">04</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <h3 style="font-size:18px;font-weight:700;margin:0">Odbiór i płatność</h3>
+          <p style="font-size:14px;line-height:1.6;color:#5a5a60;margin:0">
+            Wypłacamy gotówkę (skup) lub Ty odbierasz kluczyki do sprawnego, zarejestrowanego i ubezpieczonego auta (zakup).
+          </p>
         </div>
       </div>
-      <p style="margin:0;font-size:15px;line-height:1.65;color:#5a5a60">Auta wyceniamy i opisujemy uczciwie — łącznie z drobnymi wadami, jeśli takie są. Pełną, na bieżąco aktualizowaną ofertę znajdziesz zawsze na Otomoto.</p>
     </div>
   </section>
+
+  <!-- ============ FAQ ACCORDION ============ -->
+  <section style="padding:92px 32px">
+    <div style="max-width:900px;margin:0 auto">
+      <h2 style="font-family:'Archivo Expanded','Archivo',sans-serif;font-size:34px;font-weight:800;margin:0 0 40px;letter-spacing:-0.01em;text-align:center">
+        Częste pytania o komis & skup
+      </h2>
+      <div style="border-top:1px solid #e6e4e0">
+        {faqs.map((item, i) => (
+          <div class="faq-item" style="border-bottom:1px solid #e6e4e0">
+            <button class="faq-toggle"
+              style="width:100%;background:none;border:none;padding:24px 4px;display:flex;align-items:center;justify-content:space-between;gap:20px;cursor:pointer;text-align:left;font-family:inherit">
+              <span style="font-size:18px;font-weight:700;color:#141416">{item.q}</span>
+              <svg class={`faq-icon${i === 0 ? ' faq-icon-active' : ''}`} width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke="#8a8a90" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+                style="flex-shrink:0">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <line x1="12" y1="5" x2="12" y2="19" class="plus-vertical-line"></line>
+              </svg>
+            </button>
+            <div class={`faq-answer-wrapper${i === 0 ? ' open' : ''}`}>
+              <div class="faq-answer-content">
+                <p style="margin:0;padding:0 4px 26px;font-size:15.5px;line-height:1.65;color:#5a5a60;max-width:680px;text-wrap:pretty">
+                  {item.a}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DYNAMIC INTERACTIVE SCRIPT ============ -->
+  <script>
+    // 1. CAR FILTERING
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    const carCards = document.querySelectorAll('.car-card');
+
+    filterTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        filterTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const filterVal = tab.getAttribute('data-filter');
+
+        carCards.forEach((card) => {
+          const type = card.getAttribute('data-type');
+          if (filterVal === 'all' || type === filterVal) {
+            (card as HTMLElement).style.display = 'flex';
+            setTimeout(() => {
+              (card as HTMLElement).style.opacity = '1';
+              (card as HTMLElement).style.transform = 'translateY(0)';
+            }, 50);
+          } else {
+            (card as HTMLElement).style.opacity = '0';
+            (card as HTMLElement).style.transform = 'translateY(8px)';
+            setTimeout(() => {
+              (card as HTMLElement).style.display = 'none';
+            }, 300);
+          }
+        });
+      });
+    });
+
+    // 2. SKUP CALC LOGIC
+    const categorySelect = document.getElementById('car-category') as HTMLSelectElement;
+    const yearSlider = document.getElementById('car-year') as HTMLInputElement;
+    const yearVal = document.getElementById('year-val') as HTMLElement;
+    const mileageSlider = document.getElementById('car-mileage') as HTMLInputElement;
+    const mileageVal = document.getElementById('mileage-val') as HTMLElement;
+    const conditionButtons = document.querySelectorAll('#condition-grid .radio-btn');
+    const priceRangeText = document.getElementById('price-range') as HTMLElement;
+
+    let selectedCondition = 'dobry';
+
+    // Condition button selection
+    conditionButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        conditionButtons.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedCondition = btn.getAttribute('data-value') || 'dobry';
+        calculateValuation();
+      });
+    });
+
+    function calculateValuation() {
+      const cat = categorySelect.value;
+      const year = parseInt(yearSlider.value);
+      const mileage = parseInt(mileageSlider.value);
+
+      // Base category value
+      let baseVal = 55000;
+      if (cat === 'miejski') baseVal = 30000;
+      else if (cat === 'suv') baseVal = 75000;
+      else if (cat === 'premium') baseVal = 95000;
+      else if (cat === 'dostawczy') baseVal = 68000;
+
+      // Year factor
+      let yearFactor = 1 - (2026 - year) * 0.058;
+      if (yearFactor < 0.15) yearFactor = 0.15;
+
+      // Mileage factor
+      let mileageFactor = 1 - (mileage / 350000) * 0.28;
+      if (mileageFactor < 0.6) mileageFactor = 0.6;
+
+      // Condition factor
+      let condFactor = 0.88;
+      if (selectedCondition === 'bardzo-dobry') condFactor = 1.0;
+      else if (selectedCondition === 'do-poprawek') condFactor = 0.7;
+      else if (selectedCondition === 'uszkodzony') condFactor = 0.4;
+
+      const estimatedPrice = baseVal * yearFactor * mileageFactor * condFactor;
+
+      // Format output range
+      const minPrice = Math.max(2000, Math.round((estimatedPrice * 0.92) / 500) * 500);
+      const maxPrice = Math.max(3000, Math.round((estimatedPrice * 1.06) / 500) * 500);
+
+      const formatter = new Intl.NumberFormat('pl-PL', { style: 'decimal' });
+      priceRangeText.textContent = `${formatter.format(minPrice)} — ${formatter.format(maxPrice)} zł`;
+    }
+
+    categorySelect.addEventListener('change', calculateValuation);
+    yearSlider.addEventListener('input', () => {
+      yearVal.textContent = yearSlider.value;
+      calculateValuation();
+    });
+    mileageSlider.addEventListener('input', () => {
+      const formatter = new Intl.NumberFormat('pl-PL');
+      mileageVal.textContent = `${formatter.format(parseInt(mileageSlider.value))} km`;
+      calculateValuation();
+    });
+
+    // Run initial valuation
+    calculateValuation();
+
+    // 3. FAQ ACCORDION LOGIC
+    document.querySelectorAll('.faq-item').forEach((item) => {
+      const button = item.querySelector('.faq-toggle');
+      const wrapper = item.querySelector('.faq-answer-wrapper');
+      const icon = item.querySelector('.faq-icon');
+
+      button?.addEventListener('click', () => {
+        const isOpen = wrapper?.classList.contains('open');
+
+        // Close all other accordions
+        document.querySelectorAll('.faq-answer-wrapper.open').forEach((w) => w.classList.remove('open'));
+        document.querySelectorAll('.faq-icon.faq-icon-active').forEach((i) => i.classList.remove('faq-icon-active'));
+
+        if (!isOpen) {
+          wrapper?.classList.add('open');
+          icon?.classList.add('faq-icon-active');
+        }
+      });
+    });
+  </script>
 </Layout>
